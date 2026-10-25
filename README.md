@@ -87,6 +87,10 @@ y ejecutar con el perfil `local`:
 
 La tabla `LIBROS` se crea automáticamente al iniciar (`ddl-auto=update`). También se puede crear con `sql/crear_tabla_libros.sql`.
 
+Evidencia de Base de Datos Creada:
+<img width="1406" height="688" alt="imagen" src="https://github.com/user-attachments/assets/23408b0a-a3e5-46cf-80d2-dccc908520bc" />
+
+
 ## Ejecutar
 
 El proyecto incluye **Maven Wrapper**, por lo que no es necesario tener Maven instalado:
