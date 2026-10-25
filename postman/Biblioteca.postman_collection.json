@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "FS3_Exp1_S1 - Biblioteca",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:8080" }],
+  "item": [
+    { "name": "GET - Listar libros", "request": { "method": "GET", "url": "{{baseUrl}}/libros" } },
+    { "name": "GET - Libro por ID", "request": { "method": "GET", "url": "{{baseUrl}}/libros/1" } },
+    { "name": "POST - Crear libro", "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
+        "url": "{{baseUrl}}/libros" } },
+    { "name": "PUT - Actualizar libro", "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito (edición ilustrada)\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
+        "url": "{{baseUrl}}/libros/1" } },
+    { "name": "DELETE - Eliminar libro", "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/1" } }
+  ]
+}
