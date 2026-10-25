@@ -49,23 +49,16 @@ Ejemplo de body (POST / PUT):
   "genero": "Fábula"
 }
 ```
-Evidencia de pruebas en POSTMAN
-<img width="1566" height="841" alt="imagen" src="https://github.com/user-attachments/assets/eb52d6d0-5a31-43c0-b7b5-e917184c6844" />
-<img width="1559" height="710" alt="imagen" src="https://github.com/user-attachments/assets/d415da7d-2f7f-4a69-99c8-dbc40008d76f" />
-<img width="1558" height="713" alt="imagen" src="https://github.com/user-attachments/assets/e0644413-4e36-41b5-8b22-c7e293a92dd7" />
-<img width="1555" height="726" alt="imagen" src="https://github.com/user-attachments/assets/e3cf399d-4845-4a76-b279-add3ad65691c" />
-<img width="1561" height="630" alt="imagen" src="https://github.com/user-attachments/assets/397ebf3c-b67f-4a74-b87f-ebb46e7017c2" />
-
 
 ## Configuración de Oracle Cloud
 
 1. En Oracle Cloud crear una **Autonomous Database** (Always Free).
 2. Descargar el **Wallet** (*Database connection → Download wallet*) y descomprimirlo en la carpeta `wallet/` en la raíz del proyecto (está en `.gitignore`, **no se sube**).
-3. Revisar en `wallet/tnsnames.ora` el nombre del servicio (ej: `biblioteca_tp`).
+3. Revisar en `wallet/tnsnames.ora` el nombre del servicio (ej: `fs3db_tp`).
 4. Definir las variables de entorno (PowerShell):
 
 ```powershell
-$env:DB_SERVICE="biblioteca_tp"
+$env:DB_SERVICE="fs3db_tp"
 $env:TNS_ADMIN="C:/proyectos/FS3_Exp1_S1/wallet"
 $env:DB_USER="ADMIN"
 $env:DB_PASSWORD="tu_clave"
@@ -74,7 +67,7 @@ $env:DB_PASSWORD="tu_clave"
 **Alternativa sin variables de entorno:** crear `application-local.properties` en la raíz del proyecto (está en `.gitignore`, **no se sube**):
 
 ```properties
-spring.datasource.url=jdbc:oracle:thin:@biblioteca_tp?TNS_ADMIN=C:/proyectos/FS3_Exp1_S1/wallet
+spring.datasource.url=jdbc:oracle:thin:@fs3db_tp?TNS_ADMIN=C:/proyectos/FS3_Exp1_S1/wallet
 spring.datasource.username=ADMIN
 spring.datasource.password=tu_clave
 ```
@@ -86,10 +79,6 @@ y ejecutar con el perfil `local`:
 ```
 
 La tabla `LIBROS` se crea automáticamente al iniciar (`ddl-auto=update`). También se puede crear con `sql/crear_tabla_libros.sql`.
-
-Evidencia de Base de Datos Creada:
-<img width="1406" height="688" alt="imagen" src="https://github.com/user-attachments/assets/23408b0a-a3e5-46cf-80d2-dccc908520bc" />
-
 
 ## Ejecutar
 
@@ -117,10 +106,14 @@ Las pruebas del controlador usan Mockito y no requieren conexión a la base de d
 
 ## Evidencias
 
+**Base de datos en Oracle Cloud**
+
+<img width="1406" height="688" alt="Base de datos FS3DB en Oracle Cloud" src="https://github.com/user-attachments/assets/23408b0a-a3e5-46cf-80d2-dccc908520bc" />
+
 **Conexión a Oracle Autonomous Database (Oracle Cloud)**
 
 - El alias `fs3db_tp` del wallet apunta a `adb.sa-santiago-1.oraclecloud.com`, puerto `1522`, protocolo `tcps` (mTLS).
-- Con la aplicación corriendo, el proceso Java mantiene una conexión TCP establecida con `129.148.153.172:1522`, que es la IP a la que resuelve ese host.
+- Con la aplicación corriendo, el proceso Java mantiene una conexión TCP establecida con ese host en el puerto `1522`.
 - Log de inicio:
 
 ```
@@ -142,6 +135,14 @@ create table libros (
     primary key (id)
 )
 ```
+
+**Pruebas de los endpoints en Postman**
+
+<img width="1566" height="841" alt="Prueba en Postman 1" src="https://github.com/user-attachments/assets/eb52d6d0-5a31-43c0-b7b5-e917184c6844" />
+<img width="1559" height="710" alt="Prueba en Postman 2" src="https://github.com/user-attachments/assets/d415da7d-2f7f-4a69-99c8-dbc40008d76f" />
+<img width="1558" height="713" alt="Prueba en Postman 3" src="https://github.com/user-attachments/assets/e0644413-4e36-41b5-8b22-c7e293a92dd7" />
+<img width="1555" height="726" alt="Prueba en Postman 4" src="https://github.com/user-attachments/assets/e3cf399d-4845-4a76-b279-add3ad65691c" />
+<img width="1561" height="630" alt="Prueba en Postman 5" src="https://github.com/user-attachments/assets/397ebf3c-b67f-4a74-b87f-ebb46e7017c2" />
 
 **Pruebas de los endpoints (curl)**
 
