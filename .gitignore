@@ -15,3 +15,15 @@ buildNumber.properties
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Credenciales y wallet de Oracle (NUNCA subir al repositorio)
+wallet/
+Wallet_*/
+*.zip
+.env
+application-local.properties
