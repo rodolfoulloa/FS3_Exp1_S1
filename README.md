@@ -49,6 +49,13 @@ Ejemplo de body (POST / PUT):
   "genero": "Fábula"
 }
 ```
+Evidencia de pruebas en POSTMAN
+<img width="1566" height="841" alt="imagen" src="https://github.com/user-attachments/assets/eb52d6d0-5a31-43c0-b7b5-e917184c6844" />
+<img width="1559" height="710" alt="imagen" src="https://github.com/user-attachments/assets/d415da7d-2f7f-4a69-99c8-dbc40008d76f" />
+<img width="1558" height="713" alt="imagen" src="https://github.com/user-attachments/assets/e0644413-4e36-41b5-8b22-c7e293a92dd7" />
+<img width="1555" height="726" alt="imagen" src="https://github.com/user-attachments/assets/e3cf399d-4845-4a76-b279-add3ad65691c" />
+<img width="1561" height="630" alt="imagen" src="https://github.com/user-attachments/assets/397ebf3c-b67f-4a74-b87f-ebb46e7017c2" />
+
 
 ## Configuración de Oracle Cloud
 
