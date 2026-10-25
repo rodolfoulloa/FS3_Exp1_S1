@@ -1,22 +1,54 @@
 {
   "info": {
     "name": "FS3_Exp1_S1 - Biblioteca",
+    "description": "Ejecutar en orden (Run collection). El POST guarda el ID creado en {{libroId}} y las demás solicitudes lo usan.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [{ "key": "baseUrl", "value": "http://localhost:8080" }],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "libroId", "value": "" }
+  ],
   "item": [
-    { "name": "GET - Listar libros", "request": { "method": "GET", "url": "{{baseUrl}}/libros" } },
-    { "name": "GET - Libro por ID", "request": { "method": "GET", "url": "{{baseUrl}}/libros/1" } },
-    { "name": "POST - Crear libro", "request": {
+    { "name": "1. POST - Crear libro",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+        "pm.collectionVariables.set('libroId', pm.response.json().id);"
+      ] } }],
+      "request": {
         "method": "POST",
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
         "url": "{{baseUrl}}/libros" } },
-    { "name": "PUT - Actualizar libro", "request": {
+    { "name": "2. GET - Libro por ID",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('Devuelve el libro creado', () => pm.expect(pm.response.json().titulo).to.eql('El Principito'));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" } },
+    { "name": "3. PUT - Actualizar libro",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+        "pm.test('Título actualizado', () => pm.expect(pm.response.json().titulo).to.eql('El Principito (edición ilustrada)'));"
+      ] } }],
+      "request": {
         "method": "PUT",
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito (edición ilustrada)\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
-        "url": "{{baseUrl}}/libros/1" } },
-    { "name": "DELETE - Eliminar libro", "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/1" } }
+        "url": "{{baseUrl}}/libros/{{libroId}}" } },
+    { "name": "4. DELETE - Eliminar libro",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 204 No Content', () => pm.response.to.have.status(204));"
+      ] } }],
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/{{libroId}}" } },
+    { "name": "5. GET - Libro eliminado (404)",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" } },
+    { "name": "6. GET - Listar libros",
+      "event": [{ "listen": "test", "script": { "exec": [
+        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));"
+      ] } }],
+      "request": { "method": "GET", "url": "{{baseUrl}}/libros" } }
   ]
 }
