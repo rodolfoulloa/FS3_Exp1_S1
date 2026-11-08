@@ -1,12 +1,17 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { LibroFacade } from './facades/libro-facade';
 
+/**
+ * Componente raíz: encabezado, navegación, aviso de errores y el
+ * `router-outlet` donde se muestran las vistas de libros.
+ */
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [AsyncPipe, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('frontend');
+  protected readonly facade = inject(LibroFacade);
 }
