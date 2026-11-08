@@ -1,0 +1,50 @@
+<section class="tarjeta angosta">
+  <h2>{{ esEdicion() ? 'Editar libro #' + id() : 'Nuevo libro' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <div class="campo">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text" formControlName="titulo" maxlength="200" />
+      @if (invalido('titulo')) {
+        <span class="error-campo">El título es obligatorio.</span>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="autor">Autor</label>
+      <input id="autor" type="text" formControlName="autor" maxlength="150" />
+      @if (invalido('autor')) {
+        <span class="error-campo">El autor es obligatorio.</span>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="anio">Año de publicación</label>
+      <input id="anio" type="number" formControlName="anioPublicacion" min="0" max="2100" />
+      @if (invalido('anioPublicacion')) {
+        <span class="error-campo">
+          @if (form.controls.anioPublicacion.hasError('required')) {
+            El año de publicación es obligatorio.
+          } @else {
+            El año debe estar entre 0 y 2100.
+          }
+        </span>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="genero">Género</label>
+      <input id="genero" type="text" formControlName="genero" maxlength="80" />
+      @if (invalido('genero')) {
+        <span class="error-campo">El género es obligatorio.</span>
+      }
+    </div>
+
+    <div class="botones">
+      <button type="submit" class="boton" [disabled]="facade.cargando$ | async">
+        {{ esEdicion() ? 'Guardar cambios' : 'Agregar libro' }}
+      </button>
+      <a class="boton secundario" routerLink="/libros">Cancelar</a>
+    </div>
+  </form>
+</section>

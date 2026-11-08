@@ -1,0 +1,56 @@
+<section class="tarjeta">
+  <div class="encabezado">
+    <h2>Libros</h2>
+    <a class="boton" routerLink="/libros/nuevo">+ Nuevo libro</a>
+  </div>
+
+  <form class="buscador" (ngSubmit)="buscar()">
+    <label for="buscar-id">Buscar por ID</label>
+    <input id="buscar-id" type="number" min="1" placeholder="Ej: 1" [formControl]="idBuscado" />
+    <button type="submit" class="boton secundario">Buscar</button>
+    @if (idBuscado.touched && idBuscado.invalid) {
+      <span class="error-campo">Ingresa un ID válido (mayor que 0).</span>
+    }
+  </form>
+
+  @if (facade.cargando$ | async) {
+    <p class="cargando">Cargando…</p>
+  }
+
+  @if (facade.libros$ | async; as libros) {
+    @if (libros.length > 0) {
+      <div class="tabla-contenedor">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Año</th>
+              <th>Género</th>
+              <th class="acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (libro of libros; track libro.id) {
+              <tr>
+                <td>{{ libro.id }}</td>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.autor }}</td>
+                <td>{{ libro.anioPublicacion }}</td>
+                <td>{{ libro.genero }}</td>
+                <td class="acciones">
+                  <a class="boton chico secundario" [routerLink]="['/libros', libro.id]">Ver</a>
+                  <a class="boton chico secundario" [routerLink]="['/libros', libro.id, 'editar']">Editar</a>
+                  <button type="button" class="boton chico peligro" (click)="eliminar(libro)">Eliminar</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else if (!(facade.cargando$ | async)) {
+      <p class="vacio">No hay libros registrados.</p>
+    }
+  }
+</section>

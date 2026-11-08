@@ -1,0 +1,30 @@
+<section class="tarjeta angosta">
+  <h2>Detalle del libro</h2>
+
+  @if (facade.cargando$ | async) {
+    <p class="cargando">Cargando…</p>
+  }
+
+  @if (facade.seleccionado$ | async; as libro) {
+    <dl class="detalle">
+      <dt>ID</dt>
+      <dd>{{ libro.id }}</dd>
+      <dt>Título</dt>
+      <dd>{{ libro.titulo }}</dd>
+      <dt>Autor</dt>
+      <dd>{{ libro.autor }}</dd>
+      <dt>Año de publicación</dt>
+      <dd>{{ libro.anioPublicacion }}</dd>
+      <dt>Género</dt>
+      <dd>{{ libro.genero }}</dd>
+    </dl>
+    <div class="botones">
+      <a class="boton" [routerLink]="['/libros', libro.id, 'editar']">Editar</a>
+      <a class="boton secundario" routerLink="/libros">Volver al listado</a>
+    </div>
+  } @else if (!(facade.cargando$ | async)) {
+    <div class="botones">
+      <a class="boton secundario" routerLink="/libros">Volver al listado</a>
+    </div>
+  }
+</section>
