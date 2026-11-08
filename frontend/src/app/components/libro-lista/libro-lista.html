@@ -4,9 +4,9 @@
     <a class="boton" routerLink="/libros/nuevo">+ Nuevo libro</a>
   </div>
 
-  <form class="buscador" (ngSubmit)="buscar()">
+  <form class="buscador" [formGroup]="buscador" (ngSubmit)="buscar()">
     <label for="buscar-id">Buscar por ID</label>
-    <input id="buscar-id" type="number" min="1" placeholder="Ej: 1" [formControl]="idBuscado" />
+    <input id="buscar-id" type="number" min="1" placeholder="Ej: 1" formControlName="id" />
     <button type="submit" class="boton secundario">Buscar</button>
     @if (idBuscado.touched && idBuscado.invalid) {
       <span class="error-campo">Ingresa un ID válido (mayor que 0).</span>

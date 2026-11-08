@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { LibroFacade } from '../../facades/libro-facade';
 import { Libro } from '../../models/libro';
@@ -24,11 +24,11 @@ export class LibroLista implements OnInit {
   protected readonly facade = inject(LibroFacade);
   private readonly router = inject(Router);
 
-  /** Campo del buscador por ID. */
-  protected readonly idBuscado = new FormControl<number | null>(null, [
-    Validators.required,
-    Validators.min(1),
-  ]);
+  /** Formulario del buscador por ID. */
+  protected readonly buscador = new FormGroup({
+    id: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
+  });
+  protected readonly idBuscado = this.buscador.controls.id;
 
   ngOnInit(): void {
     this.facade.cargarLibros();
