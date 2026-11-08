@@ -1,0 +1,21 @@
+services:
+  # Microservicio Spring Boot (semana 1) conectado a Oracle Autonomous Database
+  backend:
+    build: ./backend
+    container_name: biblioteca-backend
+    env_file: .env            # DB_SERVICE, DB_USER, DB_PASSWORD (ver .env.example)
+    volumes:
+      - ./backend/wallet:/app/wallet:ro   # wallet de Oracle (no se sube a Git)
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  # Aplicación Angular servida por nginx, que además hace de proxy hacia /api
+  frontend:
+    build: ./frontend
+    container_name: biblioteca-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
