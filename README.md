@@ -25,6 +25,7 @@ flowchart LR
 FS3_Exp1_S1/
 ├── docker-compose.yml          # Levanta backend + frontend
 ├── .env.example                # Plantilla de credenciales (copiar como .env, no se sube)
+├── docs/evidencias/            # Pantallazos de la aplicación funcionando
 ├── backend/                    # Microservicio de la semana 1
 │   ├── src/main/java/cl/duoc/biblioteca
 │   │   ├── model/Libro.java                 # Entidad JPA (tabla LIBROS)
@@ -189,33 +190,70 @@ npx newman run .\backend\postman\Biblioteca.postman_collection.json
 
 ### Semana 3: aplicación Angular
 
-**Listado de libros (GET /libros)**
+Pantallazos tomados en http://localhost:4200 con la aplicación levantada con `docker compose up --build` y conectada a Oracle Autonomous Database. Las imágenes están en [`docs/evidencias/`](docs/evidencias).
 
-<!-- pantallazo del listado -->
+**1. Listado de libros (GET /libros)**
 
-**Buscar por ID / detalle (GET /libros/{id})**
+![Listado de libros](docs/evidencias/01-listado.png)
 
-<!-- pantallazo del detalle -->
+**2. Nuevo libro: validaciones del formulario (año 0–2100 y campos obligatorios)**
 
-**Nuevo libro con validaciones (POST /libros)**
+![Validaciones del formulario](docs/evidencias/02-validaciones.png)
 
-<!-- pantallazo del formulario con errores de validación y del libro creado -->
+**3. Libro creado (POST /libros) → la app muestra el detalle con el ID generado por Oracle**
 
-**Editar libro (PUT /libros/{id})**
+![Libro creado](docs/evidencias/03-libro-creado.png)
 
-<!-- pantallazo de la edición -->
+**4. El listado se actualiza con el libro nuevo (patrón Observer)**
 
-**Eliminar libro (DELETE /libros/{id}) y mensaje 404**
+![Listado con el libro nuevo](docs/evidencias/04-listado-con-nuevo.png)
 
-<!-- pantallazo después de eliminar y del aviso "No existe un libro con ID X" -->
+**5. Buscar por ID (GET /libros/{id})**
+
+![Buscar por ID](docs/evidencias/05-buscar-por-id.png)
+![Detalle del libro](docs/evidencias/06-detalle.png)
+
+**6. Editar libro (PUT /libros/{id})**
+
+![Editar libro](docs/evidencias/07-editar.png)
+![Libro actualizado](docs/evidencias/08-libro-actualizado.png)
+
+**7. Eliminar libro (DELETE /libros/{id}): desaparece del listado**
+
+![Libro eliminado](docs/evidencias/09-eliminado.png)
+
+**8. Consultar el libro eliminado: el 404 del microservicio se muestra como mensaje legible**
+
+![Error 404](docs/evidencias/10-error-404.png)
 
 **Contenedores corriendo (`docker compose ps`)**
 
-<!-- pantallazo de Docker Desktop o de la terminal -->
+```
+NAME                  STATUS         PORTS
+biblioteca-backend    Up 9 minutes   0.0.0.0:8080->8080/tcp
+biblioteca-frontend   Up 7 minutes   0.0.0.0:4200->80/tcp
+```
+
+Log del backend dentro del contenedor:
+
+```
+HikariPool-1 - Start completed.
+Database version: 19.33
+Tomcat started on port 8080 (http) with context path '/'
+Started BibliotecaApplication in 12.592 seconds
+```
 
 **Pruebas unitarias**
 
-<!-- pantallazo de ng test (19 passed) y mvnw test (BUILD SUCCESS) -->
+```
+> npx ng test --watch=false
+ Test Files  3 passed (3)
+      Tests  19 passed (19)
+
+> .\mvnw.cmd test
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
 
 Resultados de la verificación:
 
