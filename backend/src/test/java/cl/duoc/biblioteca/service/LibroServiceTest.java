@@ -49,7 +49,7 @@ class LibroServiceTest {
 
     @Test
     void crear_ignoraElIdRecibido_guardaYPublicaEventoCreado() {
-        Libro nuevo = Libro.builder().id(77L).nombre("Nuevo").build();
+        Libro nuevo = Libro.builder().id(77L).titulo("Rayuela").autor("Julio Cortázar").anioPublicacion(1963).genero("Novela").build();
         when(repositorio.save(any(Libro.class))).thenAnswer(inv -> {
             Libro i = inv.getArgument(0);
             assertThat(i.getId()).isNull(); // el ID lo genera la BD
@@ -68,14 +68,15 @@ class LibroServiceTest {
 
     @Test
     void actualizar_copiaLosDatosSobreElExistente_yPublicaEventoActualizado() {
-        Libro existente = Libro.builder().id(1L).nombre("Antes").build();
+        Libro existente = Libro.builder().id(1L).titulo("Rayuela").autor("Julio Cortázar").anioPublicacion(1963).genero("Novela").build();
         when(repositorio.findById(1L)).thenReturn(Optional.of(existente));
         when(repositorio.save(existente)).thenReturn(existente);
 
-        Libro resultado = servicio.actualizar(1L, Libro.builder().nombre("Después").build());
+        Libro resultado = servicio.actualizar(1L, Libro.builder().titulo("Rayuela (edición conmemorativa)").autor("Julio Cortázar").anioPublicacion(1963).genero("Novela experimental").build());
 
         assertThat(resultado.getId()).isEqualTo(1L);
-        assertThat(resultado.getNombre()).isEqualTo("Después");
+        assertThat(resultado.getTitulo()).isEqualTo("Rayuela (edición conmemorativa)");
+        assertThat(resultado.getGenero()).isEqualTo("Novela experimental");
         assertThat(eventoPublicado().tipo()).isEqualTo(TipoEvento.ACTUALIZADO);
     }
 
