@@ -35,3 +35,11 @@ src/main/java/cl/duoc/biblioteca
 3. `./mvnw spring-boot:run` (Windows: `.\mvnw.cmd spring-boot:run`).
 
 Pruebas (no requieren base de datos): `./mvnw test`.
+
+## Este microservicio: biblioteca 2.0.0
+
+Generado con `microservicio-arquetipo` 1.0.0 (`-Dentidad=Libro -Drecurso=libros -Dtabla=LIBROS`). Sobre la plantilla se agregaron los atributos de `Libro` (`titulo`, `autor`, `anioPublicacion`, `genero`), sus validaciones, la Factory y `copiarDatos()` del servicio.
+
+- Script de la tabla y datos de prueba: [`sql/crear_tabla_libros.sql`](sql/crear_tabla_libros.sql)
+- Colección Postman: [`postman/Biblioteca.postman_collection.json`](postman/Biblioteca.postman_collection.json)
+- Documentación completa: [README del repositorio](../README.md)
