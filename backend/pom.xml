@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.5.6</version>
-        <relativePath/>
     </parent>
 
     <groupId>cl.duoc</groupId>
     <artifactId>biblioteca</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2.0.0</version>
     <name>biblioteca</name>
-    <description>Microservicio Spring Boot para gestión de libros (DSY2205 Exp1 S1)</description>
+    <description>Microservicio generado con microservicio-arquetipo (Spring Boot 3 + Oracle)</description>
 
     <properties>
         <java.version>21</java.version>
@@ -47,7 +44,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Necesarios para conectarse a Oracle Autonomous DB usando el Wallet -->
+        <!-- Conexión a Oracle Autonomous Database usando el Wallet (mTLS) -->
         <dependency>
             <groupId>com.oracle.database.security</groupId>
             <artifactId>oraclepki</artifactId>
