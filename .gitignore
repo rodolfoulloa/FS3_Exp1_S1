@@ -12,3 +12,7 @@ application-local.properties
 .idea/
 .DS_Store
 Thumbs.db
+
+# Keepalive local de la base de datos Oracle (no se versiona)
+docker-compose.override.yml
+keepalive/
