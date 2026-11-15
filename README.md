@@ -8,7 +8,7 @@ DSY2205 Desarrollo Full Stack III
 | 3 | *"Aplicando un patrón de diseño a nuestro desarrollo"* (Exp. 2, formativa 2) | Aplicación web **Angular 22** que gestiona los libros consumiendo los 5 endpoints del microservicio, construida con el arquetipo **MVC** y patrones de diseño (carpeta `frontend/`) |
 | **4** | *"Implementando lineamientos empresariales"* (Exp. 2, formativa 4) | **Arquetipo Maven propio** con patrones de diseño (carpeta `arquetipo/`). Con él se volvió a programar el microservicio (carpeta `backend/`, v2.0.0). Versionado con **Git Flow** y tags semánticos |
 
-Versiones publicadas (tags): `v1.0.0` semana 1 · `v1.1.0` semana 3 · `v2.0.0` semana 4. Detalle en el [CHANGELOG](CHANGELOG.md).
+Versiones publicadas (tags): `v1.0.0` semana 1 · `v1.1.0` semana 3 · `v2.0.0` semana 4 · `v2.1.0` diseño Bootstrap personalizado (según comentarios del profesor). Detalle en el [CHANGELOG](CHANGELOG.md).
 
 ## Arquitectura
 
