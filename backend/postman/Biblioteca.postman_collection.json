@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "FS3_Exp1_S1 - Biblioteca",
-    "description": "Ejecutar en orden (Run collection). El POST guarda el ID creado en {{libroId}} y las demás solicitudes lo usan.",
+    "name": "FS3 Biblioteca v2 - microservicio generado con arquetipo",
+    "description": "Pruebas del microservicio de libros (semana 4) contra Oracle Autonomous Database.\n\nEjecutar en orden con 'Run collection'. El POST guarda el ID creado en {{libroId}} y las solicitudes siguientes lo usan.\n\n1. CRUD: los 5 endpoints (GET todos, GET por ID, POST, PUT, DELETE).\n2. Validaciones y errores: 400 y 404 con el cuerpo de error construido con el patrón Builder.\n3. Patrón Observer: GET /auditoria muestra los eventos CREADO, ACTUALIZADO y ELIMINADO del libro de prueba.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -9,46 +9,195 @@
     { "key": "libroId", "value": "" }
   ],
   "item": [
-    { "name": "1. POST - Crear libro",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
-        "pm.collectionVariables.set('libroId', pm.response.json().id);"
-      ] } }],
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
-        "url": "{{baseUrl}}/libros" } },
-    { "name": "2. GET - Libro por ID",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
-        "pm.test('Devuelve el libro creado', () => pm.expect(pm.response.json().titulo).to.eql('El Principito'));"
-      ] } }],
-      "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" } },
-    { "name": "3. PUT - Actualizar libro",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
-        "pm.test('Título actualizado', () => pm.expect(pm.response.json().titulo).to.eql('El Principito (edición ilustrada)'));"
-      ] } }],
-      "request": {
-        "method": "PUT",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"El Principito (edición ilustrada)\",\n  \"autor\": \"Antoine de Saint-Exupéry\",\n  \"anioPublicacion\": 1943,\n  \"genero\": \"Fábula\"\n}" },
-        "url": "{{baseUrl}}/libros/{{libroId}}" } },
-    { "name": "4. DELETE - Eliminar libro",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 204 No Content', () => pm.response.to.have.status(204));"
-      ] } }],
-      "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/{{libroId}}" } },
-    { "name": "5. GET - Libro eliminado (404)",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));"
-      ] } }],
-      "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" } },
-    { "name": "6. GET - Listar libros",
-      "event": [{ "listen": "test", "script": { "exec": [
-        "pm.test('Status 200 OK', () => pm.response.to.have.status(200));"
-      ] } }],
-      "request": { "method": "GET", "url": "{{baseUrl}}/libros" } }
+    {
+      "name": "1. CRUD",
+      "item": [
+        {
+          "name": "1.1 GET - Listar libros",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Devuelve un arreglo', () => pm.expect(pm.response.json()).to.be.an('array'));",
+            "pm.test('Cada libro tiene los 5 atributos', () => {",
+            "  pm.response.json().forEach(l => pm.expect(l).to.have.all.keys('id', 'titulo', 'autor', 'anioPublicacion', 'genero'));",
+            "});"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros" }
+        },
+        {
+          "name": "1.2 POST - Crear libro",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+            "const libro = pm.response.json();",
+            "pm.test('Oracle generó el ID', () => pm.expect(libro.id).to.be.a('number'));",
+            "pm.test('Header Location apunta al libro creado', () => pm.expect(pm.response.headers.get('Location')).to.eql('/libros/' + libro.id));",
+            "pm.test('Devuelve los datos enviados', () => {",
+            "  pm.expect(libro.titulo).to.eql('Rayuela');",
+            "  pm.expect(libro.autor).to.eql('Julio Cortázar');",
+            "  pm.expect(libro.anioPublicacion).to.eql(1963);",
+            "  pm.expect(libro.genero).to.eql('Novela');",
+            "});",
+            "pm.collectionVariables.set('libroId', libro.id);"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Rayuela\",\n  \"autor\": \"Julio Cortázar\",\n  \"anioPublicacion\": 1963,\n  \"genero\": \"Novela\"\n}" },
+            "url": "{{baseUrl}}/libros"
+          }
+        },
+        {
+          "name": "1.3 GET - Libro por ID",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Es el libro creado', () => {",
+            "  const libro = pm.response.json();",
+            "  pm.expect(libro.id).to.eql(Number(pm.collectionVariables.get('libroId')));",
+            "  pm.expect(libro.titulo).to.eql('Rayuela');",
+            "});"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" }
+        },
+        {
+          "name": "1.4 GET - Listar libros (incluye el nuevo)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('La lista contiene el libro creado', () => {",
+            "  const id = Number(pm.collectionVariables.get('libroId'));",
+            "  pm.expect(pm.response.json().map(l => l.id)).to.include(id);",
+            "});"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros" }
+        },
+        {
+          "name": "1.5 PUT - Actualizar libro",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Datos actualizados', () => {",
+            "  const libro = pm.response.json();",
+            "  pm.expect(libro.titulo).to.eql('Rayuela (edición conmemorativa)');",
+            "  pm.expect(libro.genero).to.eql('Novela experimental');",
+            "});"
+          ] } }],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Rayuela (edición conmemorativa)\",\n  \"autor\": \"Julio Cortázar\",\n  \"anioPublicacion\": 1963,\n  \"genero\": \"Novela experimental\"\n}" },
+            "url": "{{baseUrl}}/libros/{{libroId}}"
+          }
+        },
+        {
+          "name": "1.6 GET - Verificar actualización",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('Oracle guardó el cambio', () => pm.expect(pm.response.json().titulo).to.eql('Rayuela (edición conmemorativa)'));"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" }
+        },
+        {
+          "name": "1.7 DELETE - Eliminar libro",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 204 No Content', () => pm.response.to.have.status(204));"
+          ] } }],
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/{{libroId}}" }
+        },
+        {
+          "name": "1.8 GET - Libro eliminado (404)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));",
+            "pm.test('Mensaje de error', () => pm.expect(pm.response.json().error).to.eql('No existe un libro con ID ' + pm.collectionVariables.get('libroId')));"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros/{{libroId}}" }
+        }
+      ]
+    },
+    {
+      "name": "2. Validaciones y errores",
+      "item": [
+        {
+          "name": "2.1 POST - Campos vacíos (400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));",
+            "const body = pm.response.json();",
+            "pm.test('Error de validación', () => pm.expect(body.error).to.eql('Datos inválidos'));",
+            "pm.test('Detalle por cada campo', () => pm.expect(body.detalle).to.have.all.keys('titulo', 'autor', 'anioPublicacion', 'genero'));"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"\",\n  \"autor\": \"\",\n  \"genero\": \"\"\n}" },
+            "url": "{{baseUrl}}/libros"
+          }
+        },
+        {
+          "name": "2.2 POST - Año fuera de rango (400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));",
+            "pm.test('Informa el año inválido', () => pm.expect(pm.response.json().detalle.anioPublicacion).to.eql('El año de publicación no es válido'));"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"Libro del futuro\",\n  \"autor\": \"Anónimo\",\n  \"anioPublicacion\": 2500,\n  \"genero\": \"Ciencia ficción\"\n}" },
+            "url": "{{baseUrl}}/libros"
+          }
+        },
+        {
+          "name": "2.3 POST - JSON malformado (400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));",
+            "pm.test('Mensaje de JSON inválido', () => pm.expect(pm.response.json().error).to.include('JSON'));"
+          ] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{ \"titulo\": " },
+            "url": "{{baseUrl}}/libros"
+          }
+        },
+        {
+          "name": "2.4 GET - ID no numérico (400)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/libros/abc" }
+        },
+        {
+          "name": "2.5 PUT - Libro inexistente (404)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));"
+          ] } }],
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"titulo\": \"No existe\",\n  \"autor\": \"Nadie\",\n  \"anioPublicacion\": 2000,\n  \"genero\": \"Ninguno\"\n}" },
+            "url": "{{baseUrl}}/libros/999999"
+          }
+        },
+        {
+          "name": "2.6 DELETE - Libro inexistente (404)",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));"
+          ] } }],
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/libros/999999" }
+        }
+      ]
+    },
+    {
+      "name": "3. Patrón Observer",
+      "item": [
+        {
+          "name": "3.1 GET - Auditoría de eventos",
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+            "pm.test('El observador registró CREADO, ACTUALIZADO y ELIMINADO del libro de prueba', () => {",
+            "  const id = Number(pm.collectionVariables.get('libroId'));",
+            "  const tipos = pm.response.json().filter(e => e.recurso === 'libro' && e.id === id).map(e => e.tipo);",
+            "  pm.expect(tipos).to.eql(['CREADO', 'ACTUALIZADO', 'ELIMINADO']);",
+            "});"
+          ] } }],
+          "request": { "method": "GET", "url": "{{baseUrl}}/auditoria" }
+        }
+      ]
+    }
   ]
 }
