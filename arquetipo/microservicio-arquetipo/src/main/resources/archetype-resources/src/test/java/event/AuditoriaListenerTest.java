@@ -14,8 +14,8 @@ class AuditoriaListenerTest {
 
     @Test
     void registraLosEventosRecibidosEnOrden() {
-        listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.CREADO, "item", 1L));
-        listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.ELIMINADO, "item", 1L));
+        listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.CREADO, "${entidad.toLowerCase()}", 1L));
+        listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.ELIMINADO, "${entidad.toLowerCase()}", 1L));
 
         assertThat(listener.getUltimosEventos())
                 .extracting(EventoEntidad::tipo)
@@ -25,7 +25,7 @@ class AuditoriaListenerTest {
     @Test
     void conservaSoloLosUltimos50Eventos() {
         for (long i = 1; i <= 60; i++) {
-            listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.CREADO, "item", i));
+            listener.alCambiarEntidad(EventoEntidad.de(TipoEvento.CREADO, "${entidad.toLowerCase()}", i));
         }
 
         assertThat(listener.getUltimosEventos()).hasSize(50);

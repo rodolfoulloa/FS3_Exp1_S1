@@ -3,10 +3,10 @@
 #set( $symbol_escape = '\' )
 package ${package}.controller;
 
-import ${package}.dto.ItemRequest;
-import ${package}.dto.ItemResponse;
-import ${package}.factory.ItemFactory;
-import ${package}.model.Item;
+import ${package}.dto.${entidad}Request;
+import ${package}.dto.${entidad}Response;
+import ${package}.factory.${entidad}Factory;
+import ${package}.model.${entidad};
 import ${package}.service.CrudService;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -22,50 +22,50 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Controlador REST con los 5 endpoints del CRUD en /items.
+ * Controlador REST con los 5 endpoints del CRUD en /${recurso}.
  *
  * Depende de la interfaz {@link CrudService} (no de la implementación) y usa
- * {@link ItemFactory} para convertir entre DTOs y entidades.
+ * {@link ${entidad}Factory} para convertir entre DTOs y entidades.
  */
 @RestController
-@RequestMapping("/items")
-public class ItemController {
+@RequestMapping("/${recurso}")
+public class ${entidad}Controller {
 
-    private final CrudService<Item, Long> servicio;
-    private final ItemFactory factory;
+    private final CrudService<${entidad}, Long> servicio;
+    private final ${entidad}Factory factory;
 
-    public ItemController(CrudService<Item, Long> servicio, ItemFactory factory) {
+    public ${entidad}Controller(CrudService<${entidad}, Long> servicio, ${entidad}Factory factory) {
         this.servicio = servicio;
         this.factory = factory;
     }
 
-    /** GET /items: lista todos. */
+    /** GET /${recurso}: lista todos. */
     @GetMapping
-    public List<ItemResponse> listar() {
+    public List<${entidad}Response> listar() {
         return factory.crearRespuestas(servicio.listar());
     }
 
-    /** GET /items/{id}: obtiene uno por su ID. */
+    /** GET /${recurso}/{id}: obtiene uno por su ID. */
     @GetMapping("/{id}")
-    public ItemResponse obtenerPorId(@PathVariable Long id) {
+    public ${entidad}Response obtenerPorId(@PathVariable Long id) {
         return factory.crearRespuesta(servicio.obtenerPorId(id));
     }
 
-    /** POST /items: crea uno nuevo (201 Created). */
+    /** POST /${recurso}: crea uno nuevo (201 Created). */
     @PostMapping
-    public ResponseEntity<ItemResponse> crear(@Valid @RequestBody ItemRequest request) {
-        Item creado = servicio.crear(factory.crearEntidad(request));
-        return ResponseEntity.created(URI.create("/items/" + creado.getId()))
+    public ResponseEntity<${entidad}Response> crear(@Valid @RequestBody ${entidad}Request request) {
+        ${entidad} creado = servicio.crear(factory.crearEntidad(request));
+        return ResponseEntity.created(URI.create("/${recurso}/" + creado.getId()))
                 .body(factory.crearRespuesta(creado));
     }
 
-    /** PUT /items/{id}: actualiza uno existente. */
+    /** PUT /${recurso}/{id}: actualiza uno existente. */
     @PutMapping("/{id}")
-    public ItemResponse actualizar(@PathVariable Long id, @Valid @RequestBody ItemRequest request) {
+    public ${entidad}Response actualizar(@PathVariable Long id, @Valid @RequestBody ${entidad}Request request) {
         return factory.crearRespuesta(servicio.actualizar(id, factory.crearEntidad(request)));
     }
 
-    /** DELETE /items/{id}: elimina uno (204 No Content). */
+    /** DELETE /${recurso}/{id}: elimina uno (204 No Content). */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         servicio.eliminar(id);

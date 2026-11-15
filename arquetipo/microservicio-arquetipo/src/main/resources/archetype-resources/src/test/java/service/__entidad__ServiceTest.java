@@ -13,8 +13,8 @@ import static org.mockito.Mockito.when;
 import ${package}.event.EventoEntidad;
 import ${package}.event.TipoEvento;
 import ${package}.exception.RecursoNoEncontradoException;
-import ${package}.model.Item;
-import ${package}.repository.ItemRepository;
+import ${package}.model.${entidad};
+import ${package}.repository.${entidad}Repository;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,19 +29,19 @@ import org.springframework.context.ApplicationEventPublisher;
  * eventos para los observadores (Observer).
  */
 @ExtendWith(MockitoExtension.class)
-class ItemServiceTest {
+class ${entidad}ServiceTest {
 
     @Mock
-    private ItemRepository repositorio;
+    private ${entidad}Repository repositorio;
 
     @Mock
     private ApplicationEventPublisher publicador;
 
-    private ItemService servicio;
+    private ${entidad}Service servicio;
 
     @BeforeEach
     void setUp() {
-        servicio = new ItemService(repositorio, publicador);
+        servicio = new ${entidad}Service(repositorio, publicador);
     }
 
     private EventoEntidad eventoPublicado() {
@@ -52,30 +52,30 @@ class ItemServiceTest {
 
     @Test
     void crear_ignoraElIdRecibido_guardaYPublicaEventoCreado() {
-        Item nuevo = Item.builder().id(77L).nombre("Nuevo").build();
-        when(repositorio.save(any(Item.class))).thenAnswer(inv -> {
-            Item i = inv.getArgument(0);
+        ${entidad} nuevo = ${entidad}.builder().id(77L).nombre("Nuevo").build();
+        when(repositorio.save(any(${entidad}.class))).thenAnswer(inv -> {
+            ${entidad} i = inv.getArgument(0);
             assertThat(i.getId()).isNull(); // el ID lo genera la BD
             i.setId(1L);
             return i;
         });
 
-        Item creado = servicio.crear(nuevo);
+        ${entidad} creado = servicio.crear(nuevo);
 
         assertThat(creado.getId()).isEqualTo(1L);
         EventoEntidad evento = eventoPublicado();
         assertThat(evento.tipo()).isEqualTo(TipoEvento.CREADO);
-        assertThat(evento.recurso()).isEqualTo("item");
+        assertThat(evento.recurso()).isEqualTo("${entidad.toLowerCase()}");
         assertThat(evento.id()).isEqualTo(1L);
     }
 
     @Test
     void actualizar_copiaLosDatosSobreElExistente_yPublicaEventoActualizado() {
-        Item existente = Item.builder().id(1L).nombre("Antes").build();
+        ${entidad} existente = ${entidad}.builder().id(1L).nombre("Antes").build();
         when(repositorio.findById(1L)).thenReturn(Optional.of(existente));
         when(repositorio.save(existente)).thenReturn(existente);
 
-        Item resultado = servicio.actualizar(1L, Item.builder().nombre("Después").build());
+        ${entidad} resultado = servicio.actualizar(1L, ${entidad}.builder().nombre("Después").build());
 
         assertThat(resultado.getId()).isEqualTo(1L);
         assertThat(resultado.getNombre()).isEqualTo("Después");
@@ -88,7 +88,7 @@ class ItemServiceTest {
 
         assertThatThrownBy(() -> servicio.obtenerPorId(99L))
                 .isInstanceOf(RecursoNoEncontradoException.class)
-                .hasMessage("No existe un item con ID 99");
+                .hasMessage("No existe un ${entidad.toLowerCase()} con ID 99");
     }
 
     @Test

@@ -3,34 +3,34 @@
 #set( $symbol_escape = '\' )
 package ${package}.factory;
 
-import ${package}.dto.ItemRequest;
-import ${package}.dto.ItemResponse;
-import ${package}.model.Item;
+import ${package}.dto.${entidad}Request;
+import ${package}.dto.${entidad}Response;
+import ${package}.model.${entidad};
 import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
- * Patrón FACTORY: centraliza la creación de objetos {@link Item} y
- * {@link ItemResponse}. El controlador no usa {@code new} ni conoce cómo se
+ * Patrón FACTORY: centraliza la creación de objetos {@link ${entidad}} y
+ * {@link ${entidad}Response}. El controlador no usa {@code new} ni conoce cómo se
  * arma cada objeto; si cambia la forma de construirlos, solo cambia esta clase.
  */
 @Component
-public class ItemFactory {
+public class ${entidad}Factory {
 
     /** Crea la entidad a partir de los datos recibidos (usa el patrón Builder). */
-    public Item crearEntidad(ItemRequest request) {
-        return Item.builder()
+    public ${entidad} crearEntidad(${entidad}Request request) {
+        return ${entidad}.builder()
                 .nombre(request.nombre().trim())
                 .build();
     }
 
     /** Crea la respuesta JSON a partir de la entidad. */
-    public ItemResponse crearRespuesta(Item item) {
-        return new ItemResponse(item.getId(), item.getNombre());
+    public ${entidad}Response crearRespuesta(${entidad} entidad) {
+        return new ${entidad}Response(entidad.getId(), entidad.getNombre());
     }
 
     /** Crea la lista de respuestas a partir de una lista de entidades. */
-    public List<ItemResponse> crearRespuestas(List<Item> items) {
-        return items.stream().map(this::crearRespuesta).toList();
+    public List<${entidad}Response> crearRespuestas(List<${entidad}> entidades) {
+        return entidades.stream().map(this::crearRespuesta).toList();
     }
 }

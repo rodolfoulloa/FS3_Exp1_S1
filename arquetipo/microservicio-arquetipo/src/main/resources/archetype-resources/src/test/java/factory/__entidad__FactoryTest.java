@@ -5,38 +5,38 @@ package ${package}.factory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import ${package}.dto.ItemRequest;
-import ${package}.dto.ItemResponse;
-import ${package}.model.Item;
+import ${package}.dto.${entidad}Request;
+import ${package}.dto.${entidad}Response;
+import ${package}.model.${entidad};
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
 /** Pruebas del patrón Factory (y del Builder que usa internamente). */
-class ItemFactoryTest {
+class ${entidad}FactoryTest {
 
-    private final ItemFactory factory = new ItemFactory();
+    private final ${entidad}Factory factory = new ${entidad}Factory();
 
     @Test
     void crearEntidad_construyeLaEntidadSinIdYConTextosLimpios() {
-        Item item = factory.crearEntidad(new ItemRequest("  Ejemplo  "));
+        ${entidad} entidad = factory.crearEntidad(new ${entidad}Request("  Ejemplo  "));
 
-        assertThat(item.getId()).isNull();
-        assertThat(item.getNombre()).isEqualTo("Ejemplo");
+        assertThat(entidad.getId()).isNull();
+        assertThat(entidad.getNombre()).isEqualTo("Ejemplo");
     }
 
     @Test
     void crearRespuesta_copiaTodosLosAtributos() {
-        Item item = Item.builder().id(5L).nombre("Ejemplo").build();
+        ${entidad} entidad = ${entidad}.builder().id(5L).nombre("Ejemplo").build();
 
-        assertThat(factory.crearRespuesta(item)).isEqualTo(new ItemResponse(5L, "Ejemplo"));
+        assertThat(factory.crearRespuesta(entidad)).isEqualTo(new ${entidad}Response(5L, "Ejemplo"));
     }
 
     @Test
     void crearRespuestas_convierteCadaElemento() {
-        List<ItemResponse> respuestas = factory.crearRespuestas(List.of(
-                Item.builder().id(1L).nombre("A").build(),
-                Item.builder().id(2L).nombre("B").build()));
+        List<${entidad}Response> respuestas = factory.crearRespuestas(List.of(
+                ${entidad}.builder().id(1L).nombre("A").build(),
+                ${entidad}.builder().id(2L).nombre("B").build()));
 
-        assertThat(respuestas).extracting(ItemResponse::id).containsExactly(1L, 2L);
+        assertThat(respuestas).extracting(${entidad}Response::id).containsExactly(1L, 2L);
     }
 }

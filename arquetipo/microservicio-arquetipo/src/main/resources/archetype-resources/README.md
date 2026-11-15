@@ -16,7 +16,7 @@ src/main/java/${packageInPathFormat}
 ├── factory/      ${symbol_pound} Factory: DTO <-> entidad
 ├── service/      ${symbol_pound} CrudService + AbstractCrudService (Template Method) + servicio de la entidad
 ├── event/        ${symbol_pound} EventoEntidad + AuditoriaListener (Observer)
-├── controller/   ${symbol_pound} CRUD REST /items + GET /auditoria
+├── controller/   ${symbol_pound} CRUD REST /${recurso} + GET /auditoria
 └── exception/    ${symbol_pound} ErrorResponse (Builder) + manejo de errores 400/404
 ```
 
@@ -25,8 +25,8 @@ ${symbol_pound}${symbol_pound} Patrones de diseño incluidos
 | Patrón | Dónde |
 |---|---|
 | Template Method | `service/AbstractCrudService` |
-| Builder | `model/Item.Builder`, `exception/ErrorResponse.Builder` |
-| Factory | `factory/ItemFactory` |
+| Builder | `model/${entidad}.Builder`, `exception/ErrorResponse.Builder` |
+| Factory | `factory/${entidad}Factory` |
 | Observer | `service/AbstractCrudService` publica `EventoEntidad`; `event/AuditoriaListener` lo recibe |
 | Singleton | Beans de Spring (`@Service`, `@Component`, `@RestController`) |
 | Repository + DTO + Inyección de dependencias | `repository/`, `dto/`, constructores |

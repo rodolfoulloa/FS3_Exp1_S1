@@ -3,7 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.repository;
 
-import ${package}.model.Item;
+import ${package}.model.${entidad};
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
  * de las operaciones CRUD contra la base de datos Oracle.
  */
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ${entidad}Repository extends JpaRepository<${entidad}, Long> {
 }

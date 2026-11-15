@@ -11,15 +11,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 /**
- * Entidad JPA del microservicio (tabla ITEMS).
+ * Entidad JPA del microservicio (tabla ${tabla}).
  *
  * Patrón BUILDER: la clase interna {@link Builder} permite construir la entidad
- * paso a paso y de forma legible: {@code Item.builder().nombre("...").build()}.
+ * paso a paso y de forma legible: {@code ${entidad}.builder().nombre("...").build()}.
  * Agrega aquí los atributos propios de tu entidad (y en su Builder).
  */
 @Entity
-@Table(name = "ITEMS")
-public class Item implements Identificable<Long> {
+@Table(name = "${tabla}")
+public class ${entidad} implements Identificable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +30,10 @@ public class Item implements Identificable<Long> {
     private String nombre;
 
     /** Constructor vacío requerido por JPA. */
-    protected Item() {
+    protected ${entidad}() {
     }
 
-    private Item(Builder builder) {
+    private ${entidad}(Builder builder) {
         this.id = builder.id;
         this.nombre = builder.nombre;
     }
@@ -60,7 +60,7 @@ public class Item implements Identificable<Long> {
         this.nombre = nombre;
     }
 
-    /** Patrón Builder: construye un {@link Item} paso a paso. */
+    /** Patrón Builder: construye un {@link ${entidad}} paso a paso. */
     public static final class Builder {
         private Long id;
         private String nombre;
@@ -78,8 +78,8 @@ public class Item implements Identificable<Long> {
             return this;
         }
 
-        public Item build() {
-            return new Item(this);
+        public ${entidad} build() {
+            return new ${entidad}(this);
         }
     }
 }

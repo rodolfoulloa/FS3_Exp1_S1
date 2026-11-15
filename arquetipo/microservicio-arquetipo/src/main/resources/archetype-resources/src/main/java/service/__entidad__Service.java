@@ -3,13 +3,13 @@
 #set( $symbol_escape = '\' )
 package ${package}.service;
 
-import ${package}.model.Item;
-import ${package}.repository.ItemRepository;
+import ${package}.model.${entidad};
+import ${package}.repository.${entidad}Repository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio de Item. Hereda el CRUD completo de {@link AbstractCrudService}
+ * Servicio de ${entidad}. Hereda el CRUD completo de {@link AbstractCrudService}
  * (Template Method) y solo define los pasos propios de la entidad.
  *
  * Patrón SINGLETON: {@code @Service} registra una única instancia en el
@@ -18,19 +18,19 @@ import org.springframework.stereotype.Service;
  * por el constructor.
  */
 @Service
-public class ItemService extends AbstractCrudService<Item, Long> {
+public class ${entidad}Service extends AbstractCrudService<${entidad}, Long> {
 
-    public ItemService(ItemRepository repositorio, ApplicationEventPublisher publicadorEventos) {
+    public ${entidad}Service(${entidad}Repository repositorio, ApplicationEventPublisher publicadorEventos) {
         super(repositorio, publicadorEventos);
     }
 
     @Override
     protected String nombreRecurso() {
-        return "item";
+        return "${entidad.toLowerCase()}";
     }
 
     @Override
-    protected void copiarDatos(Item origen, Item destino) {
+    protected void copiarDatos(${entidad} origen, ${entidad} destino) {
         destino.setNombre(origen.getNombre());
     }
 }
