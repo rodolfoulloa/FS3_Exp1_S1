@@ -1,7 +1,10 @@
 package cl.duoc.biblioteca.controller;
 
+import cl.duoc.biblioteca.dto.LibroRequest;
+import cl.duoc.biblioteca.dto.LibroResponse;
+import cl.duoc.biblioteca.factory.LibroFactory;
 import cl.duoc.biblioteca.model.Libro;
-import cl.duoc.biblioteca.service.LibroService;
+import cl.duoc.biblioteca.service.CrudService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -15,45 +18,54 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controlador REST con los 5 endpoints del CRUD en /libros.
+ *
+ * Depende de la interfaz {@link CrudService} (no de la implementación) y usa
+ * {@link LibroFactory} para convertir entre DTOs y entidades.
+ */
 @RestController
 @RequestMapping("/libros")
 public class LibroController {
 
-    private final LibroService libroService;
+    private final CrudService<Libro, Long> servicio;
+    private final LibroFactory factory;
 
-    public LibroController(LibroService libroService) {
-        this.libroService = libroService;
+    public LibroController(CrudService<Libro, Long> servicio, LibroFactory factory) {
+        this.servicio = servicio;
+        this.factory = factory;
     }
 
-    // GET /libros -> lista todos los libros
+    /** GET /libros: lista todos. */
     @GetMapping
-    public List<Libro> listar() {
-        return libroService.listarLibros();
+    public List<LibroResponse> listar() {
+        return factory.crearRespuestas(servicio.listar());
     }
 
-    // GET /libros/{id} -> obtiene un libro por su ID
+    /** GET /libros/{id}: obtiene uno por su ID. */
     @GetMapping("/{id}")
-    public ResponseEntity<Libro> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(libroService.obtenerLibroPorId(id));
+    public LibroResponse obtenerPorId(@PathVariable Long id) {
+        return factory.crearRespuesta(servicio.obtenerPorId(id));
     }
 
-    // POST /libros -> agrega un nuevo libro
+    /** POST /libros: crea uno nuevo (201 Created). */
     @PostMapping
-    public ResponseEntity<Libro> crear(@Valid @RequestBody Libro libro) {
-        Libro creado = libroService.crearLibro(libro);
-        return ResponseEntity.created(URI.create("/libros/" + creado.getId())).body(creado);
+    public ResponseEntity<LibroResponse> crear(@Valid @RequestBody LibroRequest request) {
+        Libro creado = servicio.crear(factory.crearEntidad(request));
+        return ResponseEntity.created(URI.create("/libros/" + creado.getId()))
+                .body(factory.crearRespuesta(creado));
     }
 
-    // PUT /libros/{id} -> actualiza un libro existente
+    /** PUT /libros/{id}: actualiza uno existente. */
     @PutMapping("/{id}")
-    public ResponseEntity<Libro> actualizar(@PathVariable Long id, @Valid @RequestBody Libro libro) {
-        return ResponseEntity.ok(libroService.actualizarLibro(id, libro));
+    public LibroResponse actualizar(@PathVariable Long id, @Valid @RequestBody LibroRequest request) {
+        return factory.crearRespuesta(servicio.actualizar(id, factory.crearEntidad(request)));
     }
 
-    // DELETE /libros/{id} -> elimina un libro por su ID
+    /** DELETE /libros/{id}: elimina uno (204 No Content). */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        libroService.eliminarLibro(id);
+        servicio.eliminar(id);
         return ResponseEntity.noContent().build();
     }
 }

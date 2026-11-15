@@ -6,52 +6,57 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
+/**
+ * Entidad JPA Libro (tabla LIBROS en Oracle Autonomous Database).
+ * Mantiene los atributos de la semana 1: id, titulo, autor, anioPublicacion y genero.
+ *
+ * Patrón BUILDER: la clase interna {@link Builder} construye el libro paso a paso:
+ * {@code Libro.builder().titulo("Rayuela").autor("Julio Cortázar").anioPublicacion(1963).genero("Novela").build()}.
+ */
 @Entity
 @Table(name = "LIBROS")
-public class Libro {
+public class Libro implements Identificable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Long id;
 
-    @NotBlank(message = "El título es obligatorio")
     @Column(name = "TITULO", nullable = false, length = 200)
     private String titulo;
 
-    @NotBlank(message = "El autor es obligatorio")
     @Column(name = "AUTOR", nullable = false, length = 150)
     private String autor;
 
-    @NotNull(message = "El año de publicación es obligatorio")
-    @Min(value = 0, message = "El año de publicación no es válido")
-    @Max(value = 2100, message = "El año de publicación no es válido")
     @Column(name = "ANIO_PUBLICACION", nullable = false)
     private Integer anioPublicacion;
 
-    @NotBlank(message = "El género es obligatorio")
     @Column(name = "GENERO", nullable = false, length = 80)
     private String genero;
 
-    public Libro() {
+    /** Constructor vacío requerido por JPA. */
+    protected Libro() {
     }
 
-    public Libro(String titulo, String autor, Integer anioPublicacion, String genero) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.anioPublicacion = anioPublicacion;
-        this.genero = genero;
+    private Libro(Builder builder) {
+        this.id = builder.id;
+        this.titulo = builder.titulo;
+        this.autor = builder.autor;
+        this.anioPublicacion = builder.anioPublicacion;
+        this.genero = builder.genero;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -86,5 +91,46 @@ public class Libro {
 
     public void setGenero(String genero) {
         this.genero = genero;
+    }
+
+    /** Patrón Builder: construye un {@link Libro} paso a paso. */
+    public static final class Builder {
+        private Long id;
+        private String titulo;
+        private String autor;
+        private Integer anioPublicacion;
+        private String genero;
+
+        private Builder() {
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder titulo(String titulo) {
+            this.titulo = titulo;
+            return this;
+        }
+
+        public Builder autor(String autor) {
+            this.autor = autor;
+            return this;
+        }
+
+        public Builder anioPublicacion(Integer anioPublicacion) {
+            this.anioPublicacion = anioPublicacion;
+            return this;
+        }
+
+        public Builder genero(String genero) {
+            this.genero = genero;
+            return this;
+        }
+
+        public Libro build() {
+            return new Libro(this);
+        }
     }
 }
