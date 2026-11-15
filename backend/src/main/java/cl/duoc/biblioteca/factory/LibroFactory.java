@@ -17,13 +17,21 @@ public class LibroFactory {
     /** Crea la entidad a partir de los datos recibidos (usa el patrón Builder). */
     public Libro crearEntidad(LibroRequest request) {
         return Libro.builder()
-                .nombre(request.nombre().trim())
+                .titulo(request.titulo().trim())
+                .autor(request.autor().trim())
+                .anioPublicacion(request.anioPublicacion())
+                .genero(request.genero().trim())
                 .build();
     }
 
     /** Crea la respuesta JSON a partir de la entidad. */
     public LibroResponse crearRespuesta(Libro entidad) {
-        return new LibroResponse(entidad.getId(), entidad.getNombre());
+        return new LibroResponse(
+                entidad.getId(),
+                entidad.getTitulo(),
+                entidad.getAutor(),
+                entidad.getAnioPublicacion(),
+                entidad.getGenero());
     }
 
     /** Crea la lista de respuestas a partir de una lista de entidades. */

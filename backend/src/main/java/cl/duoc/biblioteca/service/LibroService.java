@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 /**
- * Servicio de Libro. Hereda el CRUD completo de {@link AbstractCrudService}
+ * Servicio de libros. Hereda el CRUD completo de {@link AbstractCrudService}
  * (Template Method) y solo define los pasos propios de la entidad.
  *
  * Patrón SINGLETON: {@code @Service} registra una única instancia en el
@@ -28,6 +28,9 @@ public class LibroService extends AbstractCrudService<Libro, Long> {
 
     @Override
     protected void copiarDatos(Libro origen, Libro destino) {
-        destino.setNombre(origen.getNombre());
+        destino.setTitulo(origen.getTitulo());
+        destino.setAutor(origen.getAutor());
+        destino.setAnioPublicacion(origen.getAnioPublicacion());
+        destino.setGenero(origen.getGenero());
     }
 }
