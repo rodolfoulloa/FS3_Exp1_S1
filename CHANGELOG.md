@@ -2,6 +2,15 @@
 
 Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones usan [versionado semántico](https://semver.org/lang/es/).
 
+## [2.1.0] - 2026-11-15 · Mejoras de diseño según comentarios del profesor
+
+### Cambiado
+- **Mejoras de diseño según los comentarios del profesor:** el frontend ahora usa Bootstrap 5.3.9 y Bootstrap Icons, personalizados con un tema CSS propio (`frontend/src/styles.css`).
+  - Paleta verde profundo `#173B2E`, oro mate `#C6A563` y hueso `#F1EADD`.
+  - Tipografías Playfair Display y Source Sans 3.
+  - Vistas rediseñadas: catálogo con tabla e íconos de acción, ficha de detalle con portada, formulario con validación de Bootstrap y estados de carga y de libro no encontrado.
+  - Diseño responsive para móviles.
+
 ## [2.0.0] - 2026-11-15 · Semana 4: "Implementando lineamientos empresariales"
 
 ### Agregado
@@ -40,6 +49,7 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Microservicio Spring Boot 3 con el CRUD de libros (`/libros`) sobre Oracle Autonomous Database con wallet.
 - Script SQL de la tabla `LIBROS` y colección Postman.
 
+[2.1.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/releases/tag/v1.0.0

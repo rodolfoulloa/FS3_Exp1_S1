@@ -1,259 +1,354 @@
-/* Estilos globales de la aplicación Biblioteca */
+/* =====================================================================
+   Tema personalizado "Biblioteca" sobre Bootstrap 5.3
+   ---------------------------------------------------------------------
+   Bootstrap se carga primero (angular.json → styles) y este archivo lo
+   personaliza sin modificar su código: redefine las variables CSS de
+   Bootstrap (--bs-*) y ajusta algunos componentes.
+
+   Paleta:
+     Verde profundo  #173B2E  → color principal (barra, botones, títulos)
+     Oro mate        #C6A563  → acentos (bordes, insignias, foco, detalles)
+     Hueso           #F1EADD  → fondo de la aplicación
+   ===================================================================== */
+
+/* ---------- 1. Tokens de la paleta ---------- */
 :root {
-  --color-primario: #2563eb;
-  --color-primario-oscuro: #1d4ed8;
-  --color-peligro: #dc2626;
-  --color-texto: #1f2937;
-  --color-suave: #6b7280;
-  --color-borde: #e5e7eb;
-  --color-fondo: #f3f4f6;
-  --color-tarjeta: #ffffff;
-  --radio: 8px;
+  --bib-verde: #173b2e;
+  --bib-verde-oscuro: #0f281f;
+  --bib-verde-medio: #2b5a47;
+  --bib-verde-suave: #e3ebe6;
+  --bib-oro: #c6a563;
+  --bib-oro-oscuro: #a8874a;
+  --bib-oro-suave: #efe3c7;
+  --bib-hueso: #f1eadd;
+  --bib-hueso-claro: #faf7f1;
+  --bib-borde: #e2d6bf;
+  --bib-texto: #1f2a24;
+  --bib-texto-suave: #5f6b63;
+  --bib-peligro: #9b3b2e;
+  --bib-peligro-suave: #f6e4df;
+  --bib-sombra: 0 6px 24px rgba(23, 59, 46, 0.08);
+
+  --bib-fuente-titulos: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --bib-fuente-texto: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* ---------- 2. Variables de Bootstrap redefinidas ---------- */
+  --bs-primary: var(--bib-verde);
+  --bs-primary-rgb: 23, 59, 46;
+  --bs-secondary: var(--bib-oro);
+  --bs-secondary-rgb: 198, 165, 99;
+  --bs-danger: var(--bib-peligro);
+  --bs-danger-rgb: 155, 59, 46;
+  --bs-body-bg: var(--bib-hueso);
+  --bs-body-color: var(--bib-texto);
+  --bs-body-font-family: var(--bib-fuente-texto);
+  --bs-body-font-size: 1.02rem;
+  --bs-secondary-color: var(--bib-texto-suave);
+  --bs-border-color: var(--bib-borde);
+  --bs-border-radius: 0.6rem;
+  --bs-border-radius-sm: 0.45rem;
+  --bs-border-radius-lg: 0.9rem;
+  --bs-link-color: var(--bib-verde-medio);
+  --bs-link-color-rgb: 43, 90, 71;
+  --bs-link-hover-color: var(--bib-verde);
+  --bs-link-hover-color-rgb: 23, 59, 46;
+  --bs-focus-ring-color: rgba(198, 165, 99, 0.45);
+  --bs-heading-color: var(--bib-verde);
 }
 
-* {
-  box-sizing: border-box;
+/* El componente raíz ocupa toda la altura para que el pie quede abajo */
+app-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  color: var(--color-texto);
-  background: var(--color-fondo);
-  line-height: 1.5;
+  /* Textura sutil de papel con un degradado del color hueso */
+  background:
+    radial-gradient(circle at 10% 0%, rgba(198, 165, 99, 0.10), transparent 40%),
+    var(--bib-hueso);
 }
 
-.contenedor {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 16px;
+h1, h2, h3, h4, .titulo-serif {
+  font-family: var(--bib-fuente-titulos);
+  letter-spacing: 0.01em;
 }
 
-/* Encabezado */
-.barra {
-  background: var(--color-primario);
-  color: #fff;
-}
-.barra-contenido {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-  min-height: 60px;
-}
-.barra h1 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-.barra a {
-  color: #fff;
-  text-decoration: none;
-}
-.barra nav {
-  display: flex;
-  gap: 4px;
-}
-.barra nav a {
-  padding: 6px 12px;
-  border-radius: var(--radio);
-}
-.barra nav a:hover,
-.barra nav a.activo {
-  background: rgba(255, 255, 255, 0.18);
+::selection {
+  background: var(--bib-oro-suave);
+  color: var(--bib-verde);
 }
 
-main {
-  padding-top: 24px;
-  padding-bottom: 24px;
+/* ---------- 3. Barra de navegación ---------- */
+.navbar-biblioteca {
+  background: linear-gradient(90deg, var(--bib-verde-oscuro), var(--bib-verde));
+  border-bottom: 3px solid var(--bib-oro);
+  box-shadow: 0 2px 12px rgba(15, 40, 31, 0.25);
 }
-
-.pie {
-  text-align: center;
-  color: var(--color-suave);
-  font-size: 0.85rem;
-  padding: 16px;
-}
-
-/* Tarjetas */
-.tarjeta {
-  background: var(--color-tarjeta);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  padding: 20px 24px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-.tarjeta.angosta {
-  max-width: 560px;
-  margin: 0 auto;
-}
-.tarjeta h2 {
-  margin-top: 0;
-}
-.encabezado {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.encabezado h2 {
+.navbar-biblioteca .navbar-brand {
+  font-family: var(--bib-fuente-titulos);
+  font-size: 1.45rem;
+  color: var(--bib-hueso);
   margin: 0;
 }
-
-/* Botones */
-.boton {
-  display: inline-block;
-  padding: 8px 16px;
-  border: 1px solid var(--color-primario);
-  border-radius: var(--radio);
-  background: var(--color-primario);
-  color: #fff;
-  font: inherit;
-  text-decoration: none;
-  cursor: pointer;
+.navbar-biblioteca .navbar-brand i {
+  color: var(--bib-oro);
 }
-.boton:hover {
-  background: var(--color-primario-oscuro);
+.navbar-biblioteca .nav-link {
+  color: rgba(241, 234, 221, 0.85);
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.4rem 0.9rem;
+  transition: background-color 0.15s, color 0.15s;
 }
-.boton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.navbar-biblioteca .nav-link:hover {
+  color: var(--bib-hueso);
+  background: rgba(241, 234, 221, 0.08);
 }
-.boton.secundario {
-  background: #fff;
-  color: var(--color-primario);
-}
-.boton.secundario:hover {
-  background: #eff6ff;
-}
-.boton.peligro {
-  background: #fff;
-  border-color: var(--color-peligro);
-  color: var(--color-peligro);
-}
-.boton.peligro:hover {
-  background: #fef2f2;
-}
-.boton.chico {
-  padding: 4px 10px;
-  font-size: 0.85rem;
-}
-.botones {
-  display: flex;
-  gap: 8px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
-/* Formularios */
-input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: var(--radio);
-  font: inherit;
-}
-input:focus {
-  outline: 2px solid #bfdbfe;
-  border-color: var(--color-primario);
-}
-input.ng-invalid.ng-touched {
-  border-color: var(--color-peligro);
-}
-label {
+.navbar-biblioteca .nav-link.active {
+  color: var(--bib-verde);
+  background: var(--bib-oro);
   font-weight: 600;
-  font-size: 0.9rem;
 }
-.campo {
+
+/* ---------- 4. Encabezado de página ---------- */
+.encabezado-pagina {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.encabezado-pagina h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+.encabezado-pagina .subtitulo {
+  color: var(--bib-texto-suave);
+  margin: 0.15rem 0 0;
+}
+.adorno {
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 0.5rem;
+  background: var(--bib-oro);
+  border-radius: 2px;
+}
+
+/* ---------- 5. Tarjetas ---------- */
+.card {
+  --bs-card-bg: var(--bib-hueso-claro);
+  --bs-card-border-color: var(--bib-borde);
+  --bs-card-cap-bg: transparent;
+  box-shadow: var(--bib-sombra);
+}
+.card-ficha {
+  border-top: 4px solid var(--bib-oro);
+}
+
+/* ---------- 6. Botones ---------- */
+.btn {
+  font-weight: 600;
+  --bs-btn-focus-box-shadow: 0 0 0 0.25rem rgba(198, 165, 99, 0.45);
+}
+.btn-primary {
+  --bs-btn-bg: var(--bib-verde);
+  --bs-btn-border-color: var(--bib-verde);
+  --bs-btn-hover-bg: var(--bib-verde-medio);
+  --bs-btn-hover-border-color: var(--bib-verde-medio);
+  --bs-btn-active-bg: var(--bib-verde-oscuro);
+  --bs-btn-active-border-color: var(--bib-verde-oscuro);
+  --bs-btn-disabled-bg: var(--bib-verde);
+  --bs-btn-disabled-border-color: var(--bib-verde);
+}
+.btn-oro {
+  --bs-btn-color: var(--bib-verde-oscuro);
+  --bs-btn-bg: var(--bib-oro);
+  --bs-btn-border-color: var(--bib-oro);
+  --bs-btn-hover-color: var(--bib-verde-oscuro);
+  --bs-btn-hover-bg: #d2b577;
+  --bs-btn-hover-border-color: #d2b577;
+  --bs-btn-active-color: var(--bib-verde-oscuro);
+  --bs-btn-active-bg: var(--bib-oro-oscuro);
+  --bs-btn-active-border-color: var(--bib-oro-oscuro);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--bib-verde);
+  --bs-btn-border-color: var(--bib-verde);
+  --bs-btn-hover-bg: var(--bib-verde);
+  --bs-btn-hover-border-color: var(--bib-verde);
+  --bs-btn-active-bg: var(--bib-verde-oscuro);
+  --bs-btn-active-border-color: var(--bib-verde-oscuro);
+}
+.btn-outline-secondary {
+  --bs-btn-color: var(--bib-oro-oscuro);
+  --bs-btn-border-color: var(--bib-oro);
+  --bs-btn-hover-color: var(--bib-verde-oscuro);
+  --bs-btn-hover-bg: var(--bib-oro);
+  --bs-btn-hover-border-color: var(--bib-oro);
+  --bs-btn-active-color: var(--bib-verde-oscuro);
+  --bs-btn-active-bg: var(--bib-oro-oscuro);
+  --bs-btn-active-border-color: var(--bib-oro-oscuro);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--bib-peligro);
+  --bs-btn-border-color: rgba(155, 59, 46, 0.55);
+  --bs-btn-hover-bg: var(--bib-peligro);
+  --bs-btn-hover-border-color: var(--bib-peligro);
+  --bs-btn-active-bg: #7f2f24;
+  --bs-btn-active-border-color: #7f2f24;
+}
+.btn-icono {
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 7. Formularios ---------- */
+.form-label {
+  font-weight: 600;
+  color: var(--bib-verde);
+  font-size: 0.92rem;
+}
+.form-control {
+  background-color: #fff;
+  border-color: var(--bib-borde);
+}
+.form-control:focus {
+  border-color: var(--bib-oro);
+  box-shadow: 0 0 0 0.25rem rgba(198, 165, 99, 0.3);
+}
+.input-group-text {
+  background: var(--bib-oro-suave);
+  border-color: var(--bib-borde);
+  color: var(--bib-verde);
+}
+.form-control.is-invalid {
+  border-color: var(--bib-peligro);
+}
+.invalid-feedback {
+  color: var(--bib-peligro);
+}
+
+/* ---------- 8. Tabla ---------- */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(198, 165, 99, 0.12);
+  --bs-table-border-color: var(--bib-borde);
+  margin-bottom: 0;
+}
+.table thead th {
+  background: var(--bib-verde);
+  color: var(--bib-hueso);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--bib-oro);
+  white-space: nowrap;
+}
+.table thead th:first-child {
+  border-top-left-radius: var(--bs-border-radius-sm);
+}
+.table thead th:last-child {
+  border-top-right-radius: var(--bs-border-radius-sm);
+}
+.table td {
+  vertical-align: middle;
+}
+.titulo-libro {
+  font-weight: 600;
+  color: var(--bib-verde);
+}
+
+/* ---------- 9. Insignias ---------- */
+.badge-oro {
+  background: var(--bib-oro-suave);
+  color: var(--bib-verde);
+  border: 1px solid var(--bib-oro);
+  font-weight: 600;
+}
+.badge-id {
+  background: var(--bib-verde-suave);
+  color: var(--bib-verde);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 10. Ficha de detalle ---------- */
+.ficha-dato dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bib-texto-suave);
+  font-weight: 600;
+}
+.ficha-dato dd {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.portada {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--bs-border-radius);
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 14px;
-}
-.error-campo {
-  color: var(--color-peligro);
-  font-size: 0.85rem;
-}
-.buscador {
-  display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 16px 0;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  color: var(--bib-hueso);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.25) 0 8px, transparent 8px),
+    linear-gradient(160deg, var(--bib-verde-medio), var(--bib-verde-oscuro));
+  border: 1px solid var(--bib-verde-oscuro);
+  box-shadow: inset 0 0 0 6px rgba(198, 165, 99, 0.35);
 }
-.buscador input {
-  width: 140px;
+.portada i {
+  font-size: 2.2rem;
+  color: var(--bib-oro);
 }
-
-/* Tabla */
-.tabla-contenedor {
-  overflow-x: auto;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th,
-td {
-  text-align: left;
-  padding: 10px 8px;
-  border-bottom: 1px solid var(--color-borde);
-}
-th {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  color: var(--color-suave);
-}
-tbody tr:hover {
-  background: #f9fafb;
-}
-td.acciones,
-th.acciones {
-  white-space: nowrap;
-  text-align: right;
-}
-td.acciones .boton {
-  margin-left: 4px;
+.portada .portada-titulo {
+  font-family: var(--bib-fuente-titulos);
+  font-size: 1.05rem;
+  margin-top: 0.6rem;
+  line-height: 1.25;
 }
 
-/* Detalle */
-.detalle {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  gap: 8px 20px;
-  margin: 0;
+/* ---------- 11. Alertas y estados ---------- */
+.alert-danger {
+  --bs-alert-color: #6e2a20;
+  --bs-alert-bg: var(--bib-peligro-suave);
+  --bs-alert-border-color: rgba(155, 59, 46, 0.35);
+  border-left: 4px solid var(--bib-peligro);
 }
-.detalle dt {
+.spinner-border.text-oro {
+  color: var(--bib-oro);
+}
+.estado-vacio {
+  text-align: center;
+  color: var(--bib-texto-suave);
+  padding: 2.5rem 1rem;
+}
+.estado-vacio i {
+  font-size: 2.5rem;
+  color: var(--bib-oro);
+}
+
+/* ---------- 12. Pie de página ---------- */
+.pie {
+  margin-top: auto;
+  background: var(--bib-verde-oscuro);
+  color: rgba(241, 234, 221, 0.75);
+  border-top: 3px solid var(--bib-oro);
+  font-size: 0.88rem;
+}
+.pie strong {
+  color: var(--bib-oro);
   font-weight: 600;
-  color: var(--color-suave);
-}
-.detalle dd {
-  margin: 0;
-}
-
-/* Mensajes */
-.alerta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border: 1px solid #fecaca;
-  border-radius: var(--radio);
-  background: #fef2f2;
-  color: #991b1b;
-}
-.alerta button {
-  border: none;
-  background: none;
-  font-size: 1.3rem;
-  line-height: 1;
-  color: inherit;
-  cursor: pointer;
-}
-.cargando,
-.vacio {
-  color: var(--color-suave);
 }
