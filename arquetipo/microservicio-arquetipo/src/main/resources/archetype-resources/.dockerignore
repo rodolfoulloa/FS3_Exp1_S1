@@ -1,0 +1,7 @@
+target/
+wallet/
+*.zip
+application-local.properties
+.mvn/wrapper/maven-wrapper.jar
+.idea/
+.vscode/
