@@ -2,6 +2,15 @@
 
 Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones usan [versionado semántico](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Cambiado
+- **Mejoras de diseño según los comentarios del profesor:** el frontend ahora usa Bootstrap 5.3.9 y Bootstrap Icons, personalizados con un tema CSS propio (`frontend/src/styles.css`).
+  - Paleta verde profundo `#173B2E`, oro mate `#C6A563` y hueso `#F1EADD`.
+  - Tipografías Playfair Display y Source Sans 3.
+  - Vistas rediseñadas: catálogo con tabla e íconos de acción, ficha de detalle con portada, formulario con validación de Bootstrap y estados de carga y de libro no encontrado.
+  - Diseño responsive para móviles.
+
 ## [2.0.0] - 2026-11-15 · Semana 4: "Implementando lineamientos empresariales"
 
 ### Agregado
