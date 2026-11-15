@@ -5,7 +5,10 @@ DSY2205 Desarrollo Full Stack III
 | Semana | Actividad | Qué se agrega |
 |---|---|---|
 | 1 | *"Desarrollando nuestro microservicio"* | Microservicio **Java 21 + Spring Boot 3** con CRUD de libros sobre **Oracle Autonomous Database** (carpeta `backend/`) |
-| **3** | *"Aplicando un patrón de diseño a nuestro desarrollo"* (Exp. 2, formativa 2) | Aplicación web **Angular 22** que gestiona los libros consumiendo los 5 endpoints del microservicio, construida con el arquetipo **MVC** y patrones de diseño (carpeta `frontend/`) |
+| 3 | *"Aplicando un patrón de diseño a nuestro desarrollo"* (Exp. 2, formativa 2) | Aplicación web **Angular 22** que gestiona los libros consumiendo los 5 endpoints del microservicio, construida con el arquetipo **MVC** y patrones de diseño (carpeta `frontend/`) |
+| **4** | *"Implementando lineamientos empresariales"* (Exp. 2, formativa 4) | **Arquetipo Maven propio** con patrones de diseño (carpeta `arquetipo/`). Con él se volvió a programar el microservicio (carpeta `backend/`, v2.0.0). Versionado con **Git Flow** y tags semánticos |
+
+Versiones publicadas (tags): `v1.0.0` semana 1 · `v1.1.0` semana 3 · `v2.0.0` semana 4. Detalle en el [CHANGELOG](CHANGELOG.md).
 
 ## Arquitectura
 
@@ -19,22 +22,125 @@ flowchart LR
 - El frontend llama siempre a la URL relativa `/api/libros`. Un proxy (nginx en Docker o `proxy.conf.json` con `ng serve`) la reenvía al microservicio quitando el prefijo `/api`.
 - Así el navegador ve el frontend y la API en el **mismo origen** y no se necesita configurar CORS en el backend.
 
+## Semana 4: arquetipo Maven propio y microservicio regenerado
+
+### 1. Arquetipo `microservicio-arquetipo`
+
+[`arquetipo/microservicio-arquetipo`](arquetipo/microservicio-arquetipo) es un arquetipo Maven propio (`cl.duoc.arquetipos:microservicio-arquetipo:1.0.0`). Genera un microservicio Spring Boot 3 + Oracle completo para cualquier entidad, a partir de tres parámetros: `entidad`, `recurso` y `tabla`. El paso a paso de su construcción está en su [README](arquetipo/microservicio-arquetipo/README.md).
+
+```mermaid
+flowchart LR
+    PB[Proyecto base<br/>entidad Item] -->|archetype:create-from-project| AR[microservicio-arquetipo<br/>plantilla Velocity<br/>entidad · recurso · tabla]
+    AR -->|mvnw install<br/>+ prueba de integración| M2[(Repositorio Maven local)]
+    M2 -->|archetype:generate<br/>-Dentidad=Libro -Drecurso=libros -Dtabla=LIBROS| BK[backend/<br/>biblioteca 2.0.0]
+    BK -->|se completan los atributos de Libro| OK[CRUD /libros contra Oracle]
+```
+
+```powershell
+# 1) Instalar el arquetipo (corre su prueba de integración: genera un ms-productos y ejecuta sus 20 pruebas)
+cd arquetipo\microservicio-arquetipo
+.\mvnw.cmd install
+
+# 2) Generar el microservicio de libros desde el arquetipo
+.\mvnw.cmd archetype:generate -B `
+  -DarchetypeGroupId=cl.duoc.arquetipos -DarchetypeArtifactId=microservicio-arquetipo -DarchetypeVersion=1.0.0 `
+  -DgroupId=cl.duoc -DartifactId=biblioteca -Dversion=2.0.0 -Dpackage=cl.duoc.biblioteca `
+  -Dentidad=Libro -Drecurso=libros -Dtabla=LIBROS
+```
+
+### 2. Patrones de diseño en el microservicio
+
+Los patrones vienen incluidos en el arquetipo, así que todo microservicio generado los trae. En `backend/` se aplican a la entidad `Libro`:
+
+| Patrón | Tipo | Dónde (`backend/src/main/java/cl/duoc/biblioteca/`) | Cómo se aplica |
+|---|---|---|---|
+| **Template Method** | Comportamiento | `service/AbstractCrudService.java` → `service/LibroService.java` | La clase abstracta fija el algoritmo de cada operación del CRUD: buscar, validar, guardar y notificar. `LibroService` solo define `nombreRecurso()` y `copiarDatos()`. |
+| **Observer** | Comportamiento | `event/EventoEntidad.java`, `event/AuditoriaListener.java`, `controller/AuditoriaController.java` | Al crear, actualizar o eliminar se publica un `EventoEntidad` con `ApplicationEventPublisher`. `AuditoriaListener` lo recibe con `@EventListener`, lo registra en el log y lo deja disponible en `GET /auditoria`. |
+| **Builder** | Creacional | `model/Libro.java` (`Libro.builder()`), `exception/ErrorResponse.java` | Construye libros y respuestas de error paso a paso. |
+| **Factory** | Creacional | `factory/LibroFactory.java` | Crea la entidad `Libro` desde `LibroRequest` y la respuesta `LibroResponse` desde la entidad. El controlador no usa `new`. |
+| **Singleton** | Creacional | `@Service`, `@Component`, `@RestController`, `@Repository` | Spring crea una sola instancia de cada bean. |
+| Repository · DTO · Inyección de dependencias | Arquitectura | `repository/`, `dto/`, constructores | Spring Data implementa el acceso a Oracle. Los DTOs separan el contrato JSON de la entidad JPA, y las dependencias llegan por constructor. |
+
+```mermaid
+flowchart LR
+    C[LibroController] -->|LibroRequest| F[LibroFactory<br/>Factory + Builder]
+    C --> S[LibroService<br/>extends AbstractCrudService<br/>Template Method]
+    S --> R[LibroRepository<br/>JpaRepository]
+    R --> DB[(Oracle · LIBROS)]
+    S -->|publishEvent| E((EventoEntidad))
+    E -->|@EventListener| A[AuditoriaListener<br/>Observer]
+    A --> AU[GET /auditoria]
+```
+
+El contrato de la API es el mismo de la semana 1, con los mismos 5 endpoints, el mismo JSON y los mismos errores. Por eso el frontend Angular de la semana 3 funciona sin cambios con el microservicio regenerado.
+
+### 3. Lineamientos de versionado (Git Flow)
+
+| Elemento | Regla |
+|---|---|
+| `main` | Solo versiones entregadas. Cada una lleva un tag semántico (`vMAJOR.MINOR.PATCH`). |
+| `develop` | Rama de integración del trabajo en curso. |
+| `feature/<tema>` | Una rama por funcionalidad, creada desde `develop`. Vuelve a `develop` con `merge --no-ff` para que quede registrada en el historial. |
+| `release/<versión>` | Prepara la entrega (versión y CHANGELOG). Se fusiona en `main` y en `develop`, y se etiqueta. |
+| Commits | [Conventional Commits](https://www.conventionalcommits.org/es/) en español: `feat`, `fix`, `test`, `docs`, `build`, `chore`, con el ámbito entre paréntesis (`feat(arquetipo): ...`). |
+| Versiones | `MAJOR` cuando cambia la arquitectura o algo deja de ser compatible (2.0.0: microservicio regenerado), `MINOR` para funcionalidades nuevas y `PATCH` para correcciones. |
+
+Ramas de la semana 4: `feature/arquetipo-maven` → `feature/microservicio-desde-arquetipo` → `feature/postman-evidencias` → `release/2.0.0`.
+
+```mermaid
+gitGraph
+    commit id: "v1.1.0 (semana 3)" tag: "v1.1.0"
+    branch develop
+    branch feature/arquetipo-maven
+    commit id: "create-from-project"
+    commit id: "parametriza plantilla"
+    commit id: "prueba de integración"
+    checkout develop
+    merge feature/arquetipo-maven
+    branch feature/microservicio-desde-arquetipo
+    commit id: "archetype:generate"
+    commit id: "atributos de Libro"
+    checkout develop
+    merge feature/microservicio-desde-arquetipo
+    branch feature/postman-evidencias
+    commit id: "colección Postman v2"
+    commit id: "evidencias + docs"
+    checkout develop
+    merge feature/postman-evidencias
+    branch release/2.0.0
+    commit id: "versión 2.0.0"
+    checkout main
+    merge release/2.0.0 tag: "v2.0.0"
+```
+
 ## Estructura del repositorio
 
 ```
 FS3_Exp1_S1/
 ├── docker-compose.yml          # Levanta backend + frontend
 ├── .env.example                # Plantilla de credenciales (copiar como .env, no se sube)
-├── docs/evidencias/            # Pantallazos de la aplicación funcionando
-├── backend/                    # Microservicio de la semana 1
+├── CHANGELOG.md                # Historial de versiones
+├── docs/evidencias/            # Pantallazos (semana 3: app Angular · semana 4: Postman/Newman)
+├── arquetipo/
+│   └── microservicio-arquetipo/ # Arquetipo Maven propio (semana 4)
+│       ├── pom.xml                                   # packaging maven-archetype
+│       ├── src/main/resources/META-INF/maven/archetype-metadata.xml   # parámetros
+│       ├── src/main/resources/META-INF/archetype-post-generate.groovy
+│       ├── src/main/resources/archetype-resources/   # plantilla del microservicio
+│       └── src/test/resources/projects/basic/        # prueba de integración
+├── backend/                    # Microservicio de libros v2, generado con el arquetipo
 │   ├── src/main/java/cl/duoc/biblioteca
-│   │   ├── model/Libro.java                 # Entidad JPA (tabla LIBROS)
-│   │   ├── repository/LibroRepository.java  # JpaRepository
-│   │   ├── service/                         # LibroService + LibroServiceImpl (CRUD)
-│   │   ├── controller/LibroController.java  # REST /libros
-│   │   └── exception/                       # Manejo de errores 404 / 400
+│   │   ├── model/           # Libro (JPA + Builder), Identificable
+│   │   ├── repository/      # LibroRepository (JpaRepository)
+│   │   ├── dto/             # LibroRequest (validaciones), LibroResponse
+│   │   ├── factory/         # LibroFactory (Factory)
+│   │   ├── service/         # CrudService, AbstractCrudService (Template Method), LibroService
+│   │   ├── event/           # EventoEntidad, AuditoriaListener (Observer)
+│   │   ├── controller/      # LibroController (/libros), AuditoriaController (/auditoria)
+│   │   └── exception/       # ErrorResponse (Builder), GlobalExceptionHandler
+│   ├── src/test/java/...    # 22 pruebas (controller, service, factory, observer)
 │   ├── sql/crear_tabla_libros.sql           # Script de la tabla + datos de prueba
-│   ├── postman/                             # Colección Postman
+│   ├── postman/                             # Colección Postman v2
 │   ├── Dockerfile  .dockerignore
 │   └── pom.xml  mvnw  mvnw.cmd
 └── frontend/                   # Aplicación Angular de la semana 3
@@ -100,6 +206,7 @@ El modelo del frontend (`frontend/src/app/models/libro.ts`) tiene exactamente lo
 | POST | `/libros` | `crear(libro)` | `libro-form` (nuevo) |
 | PUT | `/libros/{id}` | `actualizar(id, libro)` | `libro-form` (editar) |
 | DELETE | `/libros/{id}` | `eliminar(id)` | `libro-lista` |
+| GET | `/auditoria` | — | Solo Postman: últimos eventos del patrón Observer (semana 4) |
 
 Ejemplo de body (POST / PUT):
 
@@ -112,7 +219,7 @@ Ejemplo de body (POST / PUT):
 }
 ```
 
-Errores: `404` → `{"status":404,"error":"No existe un libro con ID 5"}` · `400` → `{"error":"Datos inválidos","detalle":{"titulo":"El título es obligatorio"}}`.
+Errores: `404` → `{"status":404,"error":"No existe un libro con ID 5"}` · `400` → `{"error":"Datos inválidos","detalle":{"titulo":"El título es obligatorio"}}`. Desde la v2 también responden 400 un JSON malformado y un ID no numérico (`/libros/abc`).
 
 ### Configuración de Oracle Cloud
 
@@ -171,22 +278,112 @@ npm start          # ng serve → http://localhost:4200
 ## Pruebas
 
 ```powershell
-cd backend;  .\mvnw.cmd test             # 6 pruebas del controlador (MockMvc + Mockito, sin BD)
+cd arquetipo\microservicio-arquetipo; .\mvnw.cmd install   # prueba de integración del arquetipo (genera ms-productos: 20 pruebas)
+cd backend;  .\mvnw.cmd test             # 22 pruebas (MockMvc + Mockito, sin BD)
 cd frontend; npx ng test --watch=false   # 19 pruebas Vitest
 ```
+
+Pruebas del backend:
+
+- `LibroControllerTest`: los 5 endpoints, el 404, los 400 por validación, el año fuera de rango, el JSON malformado y el ID no numérico.
+- `LibroServiceTest`: el algoritmo del Template Method (crear sin ID, copiar datos al actualizar) y que se publique el evento correcto en cada operación (Observer), o ninguno si falla.
+- `LibroFactoryTest`: la creación de entidades y respuestas con Factory y Builder.
+- `AuditoriaListenerTest`: el observador registra los eventos en orden y conserva los últimos 50.
 
 Pruebas del frontend:
 
 - `libro-api.spec.ts`: verifica con `HttpTestingController` el método HTTP, la URL y el body de cada uno de los 5 endpoints, y que el servicio es singleton.
 - `libro-facade.spec.ts`: la lista observada se actualiza al cargar, agregar, actualizar y eliminar. También cubre la traducción de errores 404, 400 y "servicio no disponible".
 
-La colección Postman (`backend/postman/`) sigue sirviendo para probar el microservicio directo en `http://localhost:8080`:
+La colección Postman (`backend/postman/Biblioteca.postman_collection.json`) prueba el microservicio directo en `http://localhost:8080`. Se puede importar en Postman y ejecutar con *Run collection*, o correr con Newman:
 
 ```powershell
 npx newman run .\backend\postman\Biblioteca.postman_collection.json
 ```
 
+Tiene 15 solicitudes y 30 aserciones, en tres carpetas: **1. CRUD** (los 5 endpoints, más verificaciones), **2. Validaciones y errores** (400 y 404) y **3. Patrón Observer** (`GET /auditoria` debe mostrar CREADO, ACTUALIZADO y ELIMINADO del libro de prueba).
+
 ## Evidencias
+
+### Semana 4: microservicio generado con el arquetipo, probado con Postman contra Oracle
+
+Colección Postman ejecutada con Newman (reporte `htmlextra`) contra el microservicio v2 corriendo en Docker y conectado a Oracle Autonomous Database: **15 solicitudes, 30 aserciones, 0 fallidas**.
+
+![Resumen de la ejecución](docs/evidencias/s4-01-newman-resumen.png)
+![Solicitudes por carpeta](docs/evidencias/s4-02-newman-solicitudes.png)
+
+**GET /libros: listar todos**
+
+![GET listar](docs/evidencias/s4-03-get-listar.png)
+
+**POST /libros: crear (201, Oracle genera el ID)**
+
+![POST crear](docs/evidencias/s4-04-post-crear.png)
+
+**GET /libros/{id}: obtener por ID**
+
+![GET por ID](docs/evidencias/s4-05-get-por-id.png)
+
+**PUT /libros/{id}: actualizar**
+
+![PUT actualizar](docs/evidencias/s4-06-put-actualizar.png)
+
+**DELETE /libros/{id}: eliminar (204)**
+
+![DELETE eliminar](docs/evidencias/s4-07-delete-eliminar.png)
+
+**GET /libros/{id} del libro eliminado: 404**
+
+![GET 404](docs/evidencias/s4-08-get-404.png)
+
+**POST con campos vacíos: 400 con detalle por campo (ErrorResponse con Builder)**
+
+![POST 400](docs/evidencias/s4-09-post-400-validaciones.png)
+
+**GET /auditoria: el observador registró CREADO, ACTUALIZADO y ELIMINADO (patrón Observer)**
+
+![Auditoría Observer](docs/evidencias/s4-10-observer-auditoria.png)
+
+**Instalación del arquetipo (`.\mvnw.cmd install`) con su prueba de integración**
+
+```
+[INFO] --- archetype:3.4.1:integration-test (default-integration-test) @ microservicio-arquetipo ---
+Microservicio ms-productos generado con microservicio-arquetipo
+  Entidad : Producto  ->  /productos  (tabla PRODUCTOS)
+[INFO] [INFO] Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
+[INFO] [INFO] BUILD SUCCESS
+[INFO] Installing ...\target\microservicio-arquetipo-1.0.0.jar to ~\.m2\repository\cl\duoc\arquetipos\microservicio-arquetipo\1.0.0\microservicio-arquetipo-1.0.0.jar
+[INFO] BUILD SUCCESS
+```
+
+**Generación del microservicio de libros (`archetype:generate`)**
+
+```
+Microservicio biblioteca generado con microservicio-arquetipo
+  Entidad : Libro  ->  /libros  (tabla LIBROS)
+  Siguiente paso: agrega los atributos de Libro (entidad, DTOs, Factory y copiarDatos del servicio)
+```
+
+**Pruebas del backend (`.\mvnw.cmd test`)**
+
+```
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0 -- in cl.duoc.biblioteca.controller.LibroControllerTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0 -- in cl.duoc.biblioteca.event.AuditoriaListenerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0 -- in cl.duoc.biblioteca.factory.LibroFactoryTest
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0 -- in cl.duoc.biblioteca.service.LibroServiceTest
+```
+
+**Microservicio en Docker conectado a Oracle y log del observador**
+
+```
+Database version: 19.33
+Started Application in 10.581 seconds
+[AUDITORIA] libro CREADO con ID 41
+[AUDITORIA] libro ACTUALIZADO con ID 41
+[AUDITORIA] libro ELIMINADO con ID 41
+```
+
+El frontend de la semana 3 (http://localhost:4200) siguió funcionando sin cambios contra el microservicio regenerado.
 
 ### Semana 3: aplicación Angular
 
