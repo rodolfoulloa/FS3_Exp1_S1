@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    Arquetipo Maven propio para generar microservicios Spring Boot 3 + Oracle
+    con arquitectura en capas y patrones de diseño (Template Method, Builder,
+    Factory, Observer, Singleton).
+
+    Instalar en el repositorio local:   mvnw install
+    Generar un microservicio:           mvn archetype:generate -DarchetypeGroupId=cl.duoc.arquetipos
+                                          -DarchetypeArtifactId=microservicio-arquetipo -DarchetypeVersion=1.0.0 ...
+  -->
+  <groupId>cl.duoc.arquetipos</groupId>
+  <artifactId>microservicio-arquetipo</artifactId>
+  <version>1.0.0</version>
+  <packaging>maven-archetype</packaging>
+
+  <name>microservicio-arquetipo</name>
+  <description>Arquetipo Maven para microservicios Spring Boot 3 + Java 21 + Oracle Autonomous Database, con CRUD en capas y patrones de diseño</description>
+
+  <developers>
+    <developer>
+      <id>rodolfoulloa</id>
+      <name>Rodolfo Ulloa</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/rodolfoulloa/FS3_Exp1_S1</url>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.archetype</groupId>
+        <artifactId>archetype-packaging</artifactId>
+        <version>3.4.1</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+      <!-- Incluye en el arquetipo los archivos que Maven excluye por defecto (como .gitignore) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <addDefaultExcludes>false</addDefaultExcludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

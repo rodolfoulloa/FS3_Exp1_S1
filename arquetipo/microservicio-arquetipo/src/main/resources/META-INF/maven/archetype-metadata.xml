@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Descriptor del arquetipo: define los parámetros que se piden al generar un
+  microservicio y qué archivos de archetype-resources se copian.
+
+  Parámetros propios:
+    entidad : nombre de la entidad en PascalCase (ej: Libro). Da nombre a las
+              clases: Libro, LibroService, LibroController, LibroFactory, ...
+    recurso : ruta REST en plural (ej: libros) -> /libros
+    tabla   : nombre de la tabla en Oracle (ej: LIBROS)
+  Además de los estándar de Maven: groupId, artifactId, version y package.
+-->
+<archetype-descriptor xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.2.0 https://maven.apache.org/xsd/archetype-descriptor-1.2.0.xsd" name="microservicio-arquetipo"
+    xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <requiredProperties>
+    <requiredProperty key="entidad">
+      <validationRegex>^[A-Z][A-Za-z0-9]*$</validationRegex>
+    </requiredProperty>
+    <requiredProperty key="recurso">
+      <validationRegex>^[a-z][a-z0-9-]*$</validationRegex>
+    </requiredProperty>
+    <requiredProperty key="tabla">
+      <validationRegex>^[A-Z][A-Z0-9_]*$</validationRegex>
+    </requiredProperty>
+  </requiredProperties>
+
+  <fileSets>
+    <!-- Código fuente: se filtra con Velocity y se ubica en la carpeta del paquete -->
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/main/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/main/resources</directory>
+      <includes>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" packaged="true" encoding="UTF-8">
+      <directory>src/test/java</directory>
+      <includes>
+        <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <!-- Maven Wrapper: el proyecto generado compila sin tener Maven instalado -->
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>.mvn/wrapper</directory>
+      <includes>
+        <include>**/*.properties</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <includes>
+        <include>README.md</include>
+      </includes>
+    </fileSet>
+    <!-- Archivos que se copian tal cual (sin filtrar) -->
+    <fileSet encoding="UTF-8">
+      <includes>
+        <include>.dockerignore</include>
+        <include>gitignore</include>
+        <include>Dockerfile</include>
+        <include>mvnw</include>
+        <include>mvnw.cmd</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</archetype-descriptor>
