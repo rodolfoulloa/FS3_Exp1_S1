@@ -2,6 +2,11 @@
 
 Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones usan [versionado semántico](https://semver.org/lang/es/).
 
+## [2.1.1] - 2026-11-15
+
+### Corregido
+- Diagramas Mermaid del README que GitHub no podía mostrar: la etiqueta `@EventListener` causaba un error de sintaxis. Ahora las etiquetas con caracteres especiales van entre comillas, y los 5 diagramas se validaron con mermaid-cli.
+
 ## [2.1.0] - 2026-11-15 · Mejoras de diseño según comentarios del profesor
 
 ### Cambiado
@@ -49,6 +54,7 @@ Todos los cambios relevantes del proyecto. El formato sigue [Keep a Changelog](h
 - Microservicio Spring Boot 3 con el CRUD de libros (`/libros`) sobre Oracle Autonomous Database con wallet.
 - Script SQL de la tabla `LIBROS` y colección Postman.
 
+[2.1.1]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/rodolfoulloa/FS3_Exp1_S1/compare/v1.0.0...v1.1.0
