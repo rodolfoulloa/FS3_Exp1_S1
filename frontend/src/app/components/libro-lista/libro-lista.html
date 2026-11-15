@@ -1,56 +1,98 @@
-<section class="tarjeta">
-  <div class="encabezado">
-    <h2>Libros</h2>
-    <a class="boton" routerLink="/libros/nuevo">+ Nuevo libro</a>
+<header class="encabezado-pagina">
+  <div>
+    <h2>Catálogo de libros</h2>
+    <p class="subtitulo">
+      @if (facade.libros$ | async; as libros) {
+        {{ libros.length }} {{ libros.length === 1 ? 'libro registrado' : 'libros registrados' }} en la base de datos
+      }
+    </p>
+    <span class="adorno"></span>
   </div>
+  <a class="btn btn-oro" routerLink="/libros/nuevo">
+    <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo libro
+  </a>
+</header>
 
-  <form class="buscador" [formGroup]="buscador" (ngSubmit)="buscar()">
-    <label for="buscar-id">Buscar por ID</label>
-    <input id="buscar-id" type="number" min="1" placeholder="Ej: 1" formControlName="id" />
-    <button type="submit" class="boton secundario">Buscar</button>
-    @if (idBuscado.touched && idBuscado.invalid) {
-      <span class="error-campo">Ingresa un ID válido (mayor que 0).</span>
-    }
-  </form>
-
-  @if (facade.cargando$ | async) {
-    <p class="cargando">Cargando…</p>
-  }
-
-  @if (facade.libros$ | async; as libros) {
-    @if (libros.length > 0) {
-      <div class="tabla-contenedor">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Título</th>
-              <th>Autor</th>
-              <th>Año</th>
-              <th>Género</th>
-              <th class="acciones">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (libro of libros; track libro.id) {
-              <tr>
-                <td>{{ libro.id }}</td>
-                <td>{{ libro.titulo }}</td>
-                <td>{{ libro.autor }}</td>
-                <td>{{ libro.anioPublicacion }}</td>
-                <td>{{ libro.genero }}</td>
-                <td class="acciones">
-                  <a class="boton chico secundario" [routerLink]="['/libros', libro.id]">Ver</a>
-                  <a class="boton chico secundario" [routerLink]="['/libros', libro.id, 'editar']">Editar</a>
-                  <button type="button" class="boton chico peligro" (click)="eliminar(libro)">Eliminar</button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+<section class="card">
+  <div class="card-body p-3 p-md-4">
+    <form class="row g-2 align-items-start mb-3" [formGroup]="buscador" (ngSubmit)="buscar()">
+      <div class="col-sm-auto">
+        <label for="buscar-id" class="visually-hidden">Buscar por ID</label>
+        <div class="input-group has-validation">
+          <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+          <input
+            id="buscar-id"
+            type="number"
+            min="1"
+            class="form-control"
+            placeholder="Buscar por ID"
+            formControlName="id"
+            [class.is-invalid]="idBuscado.touched && idBuscado.invalid"
+          />
+          <button type="submit" class="btn btn-primary">Buscar</button>
+          <div class="invalid-feedback">Ingresa un ID válido (mayor que 0).</div>
+        </div>
       </div>
-    } @else if (!(facade.cargando$ | async)) {
-      <p class="vacio">No hay libros registrados.</p>
+    </form>
+
+    @if (facade.cargando$ | async) {
+      <div class="d-flex align-items-center gap-2 text-body-secondary mb-3">
+        <div class="spinner-border spinner-border-sm text-oro" role="status"></div>
+        <span>Cargando libros…</span>
+      </div>
     }
-  }
+
+    @if (facade.libros$ | async; as libros) {
+      @if (libros.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Título</th>
+                <th scope="col" class="d-none d-md-table-cell">Autor</th>
+                <th scope="col" class="d-none d-sm-table-cell">Año</th>
+                <th scope="col" class="d-none d-lg-table-cell">Género</th>
+                <th scope="col" class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (libro of libros; track libro.id) {
+                <tr>
+                  <td><span class="badge badge-id">#{{ libro.id }}</span></td>
+                  <td class="titulo-libro">
+                    {{ libro.titulo }}
+                    <div class="d-md-none small text-body-secondary fw-normal">{{ libro.autor }} · {{ libro.anioPublicacion }}</div>
+                  </td>
+                  <td class="d-none d-md-table-cell">{{ libro.autor }}</td>
+                  <td class="d-none d-sm-table-cell">{{ libro.anioPublicacion }}</td>
+                  <td class="d-none d-lg-table-cell"><span class="badge badge-oro">{{ libro.genero }}</span></td>
+                  <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-primary btn-icono" [routerLink]="['/libros', libro.id]"
+                       title="Ver detalle" [attr.aria-label]="'Ver ' + libro.titulo">
+                      <i class="bi bi-eye" aria-hidden="true"></i>
+                    </a>
+                    <a class="btn btn-sm btn-outline-secondary btn-icono ms-1" [routerLink]="['/libros', libro.id, 'editar']"
+                       title="Editar" [attr.aria-label]="'Editar ' + libro.titulo">
+                      <i class="bi bi-pencil" aria-hidden="true"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-icono ms-1" (click)="eliminar(libro)"
+                            title="Eliminar" [attr.aria-label]="'Eliminar ' + libro.titulo">
+                      <i class="bi bi-trash3" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else if (!(facade.cargando$ | async)) {
+        <div class="estado-vacio">
+          <i class="bi bi-journal-x d-block mb-2" aria-hidden="true"></i>
+          <p class="mb-3">Todavía no hay libros registrados.</p>
+          <a class="btn btn-primary" routerLink="/libros/nuevo">Agregar el primero</a>
+        </div>
+      }
+    }
+  </div>
 </section>

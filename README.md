@@ -155,6 +155,7 @@ FS3_Exp1_S1/
     │   ├── app.routes.ts                    # Rutas
     │   └── app.config.ts                    # HttpClient + router
     ├── src/environments/environment.ts      # apiUrl = '/api/libros'
+    ├── src/styles.css                       # Tema CSS personalizado sobre Bootstrap (paleta verde · oro · hueso)
     ├── proxy.conf.json                      # Proxy para ng serve
     ├── nginx.conf  Dockerfile  .dockerignore
     └── package.json  angular.json
@@ -182,6 +183,21 @@ flowchart LR
 | **Decorator** | Diseño (estructural) | Todos los componentes y servicios | `@Component` y `@Injectable` agregan metadatos y comportamiento a las clases (selector, plantilla, inyección de dependencias) sin modificarlas. |
 
 Cada archivo tiene comentarios que explican su rol en el arquetipo y el patrón que aplica.
+
+## Diseño de la interfaz: Bootstrap con CSS personalizado
+
+La interfaz usa **Bootstrap 5.3.9** y **Bootstrap Icons 1.13.2**, personalizados con un tema CSS propio: [`frontend/src/styles.css`](frontend/src/styles.css). Son mejoras de diseño hechas según los comentarios del profesor.
+
+- **Cómo se personaliza:** `angular.json` carga primero `bootstrap.min.css`, luego los íconos y al final `styles.css`. El tema no modifica Bootstrap. Redefine sus variables CSS (`--bs-primary`, `--bs-body-bg`, `--bs-border-color`, `--bs-btn-*`, `--bs-table-*`, etc.) y agrega clases propias: `navbar-biblioteca`, `btn-oro`, `badge-oro`, `card-ficha`, `portada`, `encabezado-pagina` y `pie`.
+- **Tipografía:** *Playfair Display* para los títulos (estilo editorial) y *Source Sans 3* para el texto, desde Google Fonts. Si no cargan, se usan fuentes del sistema.
+- **Componentes de Bootstrap usados:** navbar, card, table, input-group, form-control con validación (`is-invalid` / `invalid-feedback`), botones, badges, alertas descartables y spinners.
+- **Responsive:** en pantallas angostas la tabla oculta Autor, Año y Género (los muestra bajo el título) y la barra deja solo los íconos.
+
+| Color | Hex | Uso |
+|---|---|---|
+| Verde profundo | `#173B2E` | Barra de navegación, botones principales, encabezado de la tabla, títulos |
+| Oro mate | `#C6A563` | Acentos: borde de la barra y de las fichas, botón "Nuevo libro", insignias de género, foco de los campos |
+| Hueso | `#F1EADD` | Fondo de la aplicación (con tarjetas en un tono más claro, `#FAF7F1`) |
 
 ## Microservicio (backend)
 
@@ -387,7 +403,7 @@ El frontend de la semana 3 (http://localhost:4200) siguió funcionando sin cambi
 
 ### Semana 3: aplicación Angular
 
-Pantallazos tomados en http://localhost:4200 con la aplicación levantada con `docker compose up --build` y conectada a Oracle Autonomous Database. Las imágenes están en [`docs/evidencias/`](docs/evidencias).
+Pantallazos actualizados con el diseño Bootstrap personalizado, tomados en http://localhost:4200 con la aplicación levantada con `docker compose up --build` y conectada a Oracle Autonomous Database. Las imágenes están en [`docs/evidencias/`](docs/evidencias).
 
 **1. Listado de libros (GET /libros)**
 
@@ -422,6 +438,10 @@ Pantallazos tomados en http://localhost:4200 con la aplicación levantada con `d
 **8. Consultar el libro eliminado: el 404 del microservicio se muestra como mensaje legible**
 
 ![Error 404](docs/evidencias/10-error-404.png)
+
+**9. Vista móvil (responsive)**
+
+<img src="docs/evidencias/11-movil.png" alt="Vista móvil" width="320" />
 
 **Contenedores corriendo (`docker compose ps`)**
 

@@ -1,30 +1,74 @@
-<section class="tarjeta angosta">
-  <h2>Detalle del libro</h2>
+<header class="encabezado-pagina">
+  <div>
+    <h2>Detalle del libro</h2>
+    <p class="subtitulo">Ficha obtenida desde el microservicio (GET /libros/{{ id() }})</p>
+    <span class="adorno"></span>
+  </div>
+  <a class="btn btn-outline-primary" routerLink="/libros">
+    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver al catálogo
+  </a>
+</header>
 
-  @if (facade.cargando$ | async) {
-    <p class="cargando">Cargando…</p>
-  }
+@if (facade.cargando$ | async) {
+  <div class="d-flex align-items-center gap-2 text-body-secondary">
+    <div class="spinner-border spinner-border-sm text-oro" role="status"></div>
+    <span>Cargando libro…</span>
+  </div>
+}
 
-  @if (facade.seleccionado$ | async; as libro) {
-    <dl class="detalle">
-      <dt>ID</dt>
-      <dd>{{ libro.id }}</dd>
-      <dt>Título</dt>
-      <dd>{{ libro.titulo }}</dd>
-      <dt>Autor</dt>
-      <dd>{{ libro.autor }}</dd>
-      <dt>Año de publicación</dt>
-      <dd>{{ libro.anioPublicacion }}</dd>
-      <dt>Género</dt>
-      <dd>{{ libro.genero }}</dd>
-    </dl>
-    <div class="botones">
-      <a class="boton" [routerLink]="['/libros', libro.id, 'editar']">Editar</a>
-      <a class="boton secundario" routerLink="/libros">Volver al listado</a>
+@if (facade.seleccionado$ | async; as libro) {
+  <section class="card card-ficha mx-auto" style="max-width: 860px">
+    <div class="card-body p-4">
+      <div class="row g-4 align-items-start">
+        <div class="col-5 col-md-4 mx-auto">
+          <div class="portada" aria-hidden="true">
+            <i class="bi bi-book"></i>
+            <span class="portada-titulo">{{ libro.titulo }}</span>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="badge badge-id">#{{ libro.id }}</span>
+            <span class="badge badge-oro">{{ libro.genero }}</span>
+          </div>
+          <h3 class="mb-1">{{ libro.titulo }}</h3>
+          <p class="text-body-secondary fs-5 mb-4">{{ libro.autor }}</p>
+
+          <dl class="row ficha-dato mb-0">
+            <div class="col-sm-6">
+              <dt>Autor</dt>
+              <dd>{{ libro.autor }}</dd>
+            </div>
+            <div class="col-sm-6">
+              <dt>Año de publicación</dt>
+              <dd>{{ libro.anioPublicacion }}</dd>
+            </div>
+            <div class="col-sm-6">
+              <dt>Género</dt>
+              <dd>{{ libro.genero }}</dd>
+            </div>
+            <div class="col-sm-6">
+              <dt>ID</dt>
+              <dd>{{ libro.id }}</dd>
+            </div>
+          </dl>
+
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            <a class="btn btn-primary" [routerLink]="['/libros', libro.id, 'editar']">
+              <i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar
+            </a>
+            <a class="btn btn-outline-secondary" routerLink="/libros">Volver al catálogo</a>
+          </div>
+        </div>
+      </div>
     </div>
-  } @else if (!(facade.cargando$ | async)) {
-    <div class="botones">
-      <a class="boton secundario" routerLink="/libros">Volver al listado</a>
+  </section>
+} @else if (!(facade.cargando$ | async)) {
+  <section class="card mx-auto" style="max-width: 560px">
+    <div class="estado-vacio">
+      <i class="bi bi-journal-x d-block mb-2" aria-hidden="true"></i>
+      <p class="mb-3">No se encontró el libro solicitado.</p>
+      <a class="btn btn-primary" routerLink="/libros">Ir al catálogo</a>
     </div>
-  }
-</section>
+  </section>
+}
