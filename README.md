@@ -8,7 +8,7 @@ DSY2205 Desarrollo Full Stack III
 | 3 | *"Aplicando un patrón de diseño a nuestro desarrollo"* (Exp. 2, formativa 2) | Aplicación web **Angular 22** que gestiona los libros consumiendo los 5 endpoints del microservicio, construida con el arquetipo **MVC** y patrones de diseño (carpeta `frontend/`) |
 | **4** | *"Implementando lineamientos empresariales"* (Exp. 2, formativa 4) | **Arquetipo Maven propio** con patrones de diseño (carpeta `arquetipo/`). Con él se volvió a programar el microservicio (carpeta `backend/`, v2.0.0). Versionado con **Git Flow** y tags semánticos |
 
-Versiones publicadas (tags): `v1.0.0` semana 1 · `v1.1.0` semana 3 · `v2.0.0` semana 4 · `v2.1.0` diseño Bootstrap personalizado (según comentarios del profesor). Detalle en el [CHANGELOG](CHANGELOG.md).
+Versiones publicadas (tags): `v1.0.0` semana 1 · `v1.1.0` semana 3 · `v2.0.0` semana 4 · `v2.1.0` diseño Bootstrap personalizado (según comentarios del profesor) · `v2.1.1` corrección de diagramas del README. Detalle en el [CHANGELOG](CHANGELOG.md).
 
 ## Arquitectura
 
@@ -30,10 +30,10 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    PB[Proyecto base<br/>entidad Item] -->|archetype:create-from-project| AR[microservicio-arquetipo<br/>plantilla Velocity<br/>entidad · recurso · tabla]
-    AR -->|mvnw install<br/>+ prueba de integración| M2[(Repositorio Maven local)]
-    M2 -->|archetype:generate<br/>-Dentidad=Libro -Drecurso=libros -Dtabla=LIBROS| BK[backend/<br/>biblioteca 2.0.0]
-    BK -->|se completan los atributos de Libro| OK[CRUD /libros contra Oracle]
+    PB["Proyecto base<br/>entidad Item"] -->|"archetype:create-from-project"| AR["microservicio-arquetipo<br/>plantilla Velocity<br/>entidad · recurso · tabla"]
+    AR -->|"mvnw install<br/>+ prueba de integración"| M2[("Repositorio Maven local")]
+    M2 -->|"archetype:generate<br/>-Dentidad=Libro -Drecurso=libros -Dtabla=LIBROS"| BK["backend/<br/>biblioteca 2.0.0"]
+    BK -->|"se completan los atributos de Libro"| OK["CRUD /libros contra Oracle"]
 ```
 
 ```powershell
@@ -63,13 +63,13 @@ Los patrones vienen incluidos en el arquetipo, así que todo microservicio gener
 
 ```mermaid
 flowchart LR
-    C[LibroController] -->|LibroRequest| F[LibroFactory<br/>Factory + Builder]
-    C --> S[LibroService<br/>extends AbstractCrudService<br/>Template Method]
-    S --> R[LibroRepository<br/>JpaRepository]
-    R --> DB[(Oracle · LIBROS)]
-    S -->|publishEvent| E((EventoEntidad))
-    E -->|@EventListener| A[AuditoriaListener<br/>Observer]
-    A --> AU[GET /auditoria]
+    C["LibroController"] -->|"LibroRequest"| F["LibroFactory<br/>Factory + Builder"]
+    C --> S["LibroService<br/>extends AbstractCrudService<br/>Template Method"]
+    S --> R["LibroRepository<br/>JpaRepository"]
+    R --> DB[("Oracle · LIBROS")]
+    S -->|"publishEvent"| E(("EventoEntidad"))
+    E -->|"#64;EventListener"| A["AuditoriaListener<br/>Observer"]
+    A --> AU["GET /auditoria"]
 ```
 
 El contrato de la API es el mismo de la semana 1, con los mismos 5 endpoints, el mismo JSON y los mismos errores. Por eso el frontend Angular de la semana 3 funciona sin cambios con el microservicio regenerado.
